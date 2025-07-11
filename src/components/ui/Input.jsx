@@ -1,6 +1,21 @@
 import React from "react";
 import { cn } from "../../utils/cn";
 
+// Helper function to determine autocomplete value
+const getAutoCompleteValue = (type, name) => {
+    if (type === "email") return "email";
+    if (type === "password") return "current-password";
+    if (type === "tel") return "tel";
+    if (type === "url") return "url";
+    if (name === "email") return "email";
+    if (name === "password") return "current-password";
+    if (name === "username") return "username";
+    if (name === "given-name" || name === "firstName") return "given-name";
+    if (name === "family-name" || name === "lastName") return "family-name";
+    if (name === "phone" || name === "tel") return "tel";
+    return "off";
+};
+
 const Input = React.forwardRef(({
     className,
     type = "text",
@@ -74,6 +89,8 @@ const Input = React.forwardRef(({
                 )}
                 ref={ref}
                 id={inputId}
+                name={props.name || inputId}
+                autoComplete={props.autoComplete || getAutoCompleteValue(type, props.name)}
                 {...props}
             />
 
