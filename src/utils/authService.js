@@ -34,6 +34,7 @@ class AuthService {
   // Sign up with email and password
   async signUp(email, password, userData = {}) {
     try {
+      console.log('🔍 Attempting to sign up with Supabase...');
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -46,11 +47,24 @@ class AuthService {
       });
 
       if (error) {
+        console.error('❌ Supabase sign up error:', error);
         return { success: false, error: error.message };
+      }
+
+      console.log('✅ Sign up successful:', data);
+      
+      // If email confirmation is required, show a message
+      if (data?.user && !data?.session) {
+        return { 
+          success: true, 
+          data,
+          message: 'Account created! Please check your email to confirm your account before signing in.'
+        };
       }
 
       return { success: true, data };
     } catch (error) {
+      console.error('❌ JavaScript error in signUp:', error);
       if (error?.message?.includes('Failed to fetch') || 
           error?.message?.includes('AuthRetryableFetchError')) {
         return { 
