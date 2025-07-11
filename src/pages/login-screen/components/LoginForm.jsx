@@ -3,20 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
 import Icon from '../../../components/AppIcon';
+import { useAuth } from '../../../contexts/AuthContext';
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const { signIn } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-
-  const mockCredentials = {
-    email: 'john.doe@example.com',
-    password: 'password123'
-  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -62,19 +59,23 @@ const LoginForm = () => {
     
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      if (formData.email === mockCredentials.email && formData.password === mockCredentials.password) {
-        localStorage.setItem('authToken', 'mock-jwt-token-12345');
-        localStorage.setItem('userEmail', formData.email);
+    try {
+      const result = await signIn(formData.email, formData.password);
+      
+      if (result.success) {
         navigate('/dashboard');
       } else {
         setErrors({
-          submit: 'Invalid email or password. Please try again.'
+          submit: result.error || 'Invalid email or password. Please try again.'
         });
       }
+    } catch (error) {
+      setErrors({
+        submit: 'Something went wrong. Please try again.'
+      });
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const handleForgotPassword = () => {

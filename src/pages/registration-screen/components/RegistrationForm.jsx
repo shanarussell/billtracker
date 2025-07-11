@@ -4,9 +4,11 @@ import Input from '../../../components/ui/Input';
 import Button from '../../../components/ui/Button';
 import { Checkbox } from '../../../components/ui/Checkbox';
 import Icon from '../../../components/AppIcon';
+import { useAuth } from '../../../contexts/AuthContext';
 
 const RegistrationForm = () => {
   const navigate = useNavigate();
+  const { signUp } = useAuth();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -114,29 +116,24 @@ const RegistrationForm = () => {
     setIsLoading(true);
 
     try {
-      // Mock registration API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Mock successful registration
-      const mockUser = {
-        id: Date.now(),
+      const userData = {
+        fullName: `${formData.firstName} ${formData.lastName}`,
         firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        createdAt: new Date().toISOString()
+        lastName: formData.lastName
       };
 
-      // Store user data and auth token
-      localStorage.setItem('authToken', 'mock-jwt-token-' + Date.now());
-      localStorage.setItem('userData', JSON.stringify(mockUser));
+      const result = await signUp(formData.email, formData.password, userData);
       
-      // Navigate to dashboard with success message
-      navigate('/dashboard', { 
-        state: { 
-          message: 'Account created successfully! Welcome to BillTracker Pro.',
-          type: 'success'
-        }
-      });
+      if (result.success) {
+        navigate('/dashboard', { 
+          state: { 
+            message: 'Account created successfully! Welcome to BillTracker Pro.',
+            type: 'success'
+          }
+        });
+      } else {
+        setErrors({ submit: result.error || 'Registration failed. Please try again.' });
+      }
     } catch (error) {
       setErrors({ submit: 'Registration failed. Please try again.' });
     } finally {
