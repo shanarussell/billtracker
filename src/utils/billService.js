@@ -4,6 +4,7 @@ class BillService {
   // Get all bills for the current user
   async getBills(userId) {
     try {
+      console.log('🔍 Attempting to fetch bills for user:', userId);
       const { data, error } = await supabase
         .from('bills')
         .select(`
@@ -14,8 +15,11 @@ class BillService {
         .order('due_date', { ascending: true });
 
       if (error) {
+        console.error('❌ Supabase getBills error:', error);
         return { success: false, error: error.message };
       }
+
+      console.log('✅ Bills fetched successfully:', data?.length || 0, 'bills found');
 
       // Transform data to match component expectations
       const transformedData = data?.map(bill => ({
@@ -36,6 +40,7 @@ class BillService {
 
       return { success: true, data: transformedData };
     } catch (error) {
+      console.error('❌ JavaScript error in getBills:', error);
       if (error?.message?.includes('Failed to fetch') || 
           error?.message?.includes('NetworkError')) {
         return { 

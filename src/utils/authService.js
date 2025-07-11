@@ -4,17 +4,21 @@ class AuthService {
   // Sign in with email and password
   async signIn(email, password) {
     try {
+      console.log('🔍 Attempting to sign in with Supabase...');
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
 
       if (error) {
+        console.error('❌ Supabase sign in error:', error);
         return { success: false, error: error.message };
       }
 
+      console.log('✅ Sign in successful:', data);
       return { success: true, data };
     } catch (error) {
+      console.error('❌ JavaScript error in signIn:', error);
       if (error?.message?.includes('Failed to fetch') || 
           error?.message?.includes('AuthRetryableFetchError')) {
         return { 

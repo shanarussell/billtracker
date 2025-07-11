@@ -17,4 +17,17 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// Test the connection
+console.log('🔍 Testing Supabase connection...');
+supabase.auth.getSession().then(({ data, error }) => {
+  if (error) {
+    console.error('❌ Supabase connection error:', error);
+  } else {
+    console.log('✅ Supabase connection successful');
+    console.log('Session:', data.session ? 'Active' : 'No session');
+  }
+}).catch(err => {
+  console.error('❌ Supabase connection failed:', err);
+});
+
 export default supabase;
