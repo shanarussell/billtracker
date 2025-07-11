@@ -1,0 +1,435 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import billService from '../../utils/billService';
+import Header from '../../components/ui/Header';
+import Breadcrumb from '../../components/ui/Breadcrumb';
+import Button from '../../components/ui/Button';
+import BillCard from './components/BillCard';
+import BillTable from './components/BillTable';
+import FilterBar from './components/FilterBar';
+import BulkActions from './components/BulkActions';
+import DeleteConfirmModal from './components/DeleteConfirmModal';
+import ViewToggle from './components/ViewToggle';
+import Icon from '../../components/AppIcon';
+
+const BillManagement = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { user, loading: authLoading } = useAuth();
+  
+  // State management
+  const [bills, setBills] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('dueDate');
+  const [selectedBills, setSelectedBills] = useState([]);
+  const [currentView, setCurrentView] = useState('cards');
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, billId: null, billName: '', isMultiple: false });
+
+  // Load bills
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadBills = async () => {
+      if (!user?.id || authLoading) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await billService.getBills(user.id);
+
+        if (!isMounted) return;
+
+        if (result?.success) {
+          setBills(result.data || []);
+        } else {
+          setError(result?.error || 'Failed to load bills');
+        }
+      } catch (error) {
+        if (isMounted) {
+          setError('Failed to load bills');
+          console.log('Load bills error:', error);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadBills();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user?.id, authLoading]);
+
+  // Filter and sort bills
+  const filteredAndSortedBills = React.useMemo(() => {
+    let filtered = bills.filter(bill => {
+      // Search filter
+      const matchesSearch = bill?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           bill?.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           bill?.paymentMethod?.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      // Status filter
+      let matchesStatus = true;
+      if (statusFilter === 'paid') {
+        matchesStatus = bill.status === 'paid';
+      } else if (statusFilter === 'unpaid') {
+        matchesStatus = bill.status === 'unpaid';
+      } else if (statusFilter === 'overdue') {
+        matchesStatus = bill.status === 'overdue';
+      }
+      
+      return matchesSearch && matchesStatus;
+    });
+
+    // Sort bills
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'amount':
+          return (b?.amount || 0) - (a?.amount || 0);
+        case 'name':
+          return (a?.name || '').localeCompare(b?.name || '');
+        case 'dueDate':
+        default:
+          return new Date(a?.dueDate || 0) - new Date(b?.dueDate || 0);
+      }
+    });
+
+    return filtered;
+  }, [bills, searchTerm, statusFilter, sortBy]);
+
+  // Handle bill actions
+  const handleTogglePayment = async (billId) => {
+    const bill = bills.find(b => b.id === billId);
+    if (!bill) return;
+
+    try {
+      const result = await billService.toggleBillPayment(billId, !bill.isPaid);
+      
+      if (result?.success) {
+        setBills(prevBills => 
+          prevBills.map(b => 
+            b.id === billId 
+              ? { ...b, isPaid: !b.isPaid, status: !b.isPaid ? 'paid' : 'unpaid' }
+              : b
+          )
+        );
+      } else {
+        setError(result?.error || 'Failed to update payment status');
+      }
+    } catch (error) {
+      setError('Failed to update payment status');
+      console.log('Toggle payment error:', error);
+    }
+  };
+
+  const handleEditBill = (bill) => {
+    navigate('/add-edit-bill', { state: { bill } });
+  };
+
+  const handleDeleteBill = (billId) => {
+    const bill = bills.find(b => b.id === billId);
+    setDeleteModal({
+      isOpen: true,
+      billId,
+      billName: bill?.name || '',
+      isMultiple: false
+    });
+  };
+
+  const confirmDelete = async () => {
+    try {
+      if (deleteModal.isMultiple) {
+        // Delete multiple bills
+        const deletePromises = selectedBills.map(billId => billService.deleteBill(billId));
+        await Promise.all(deletePromises);
+        
+        setBills(prevBills => prevBills.filter(bill => !selectedBills.includes(bill.id)));
+        setSelectedBills([]);
+      } else {
+        // Delete single bill
+        const result = await billService.deleteBill(deleteModal.billId);
+        
+        if (result?.success) {
+          setBills(prevBills => prevBills.filter(bill => bill.id !== deleteModal.billId));
+        } else {
+          setError(result?.error || 'Failed to delete bill');
+        }
+      }
+    } catch (error) {
+      setError('Failed to delete bill(s)');
+      console.log('Delete bill error:', error);
+    }
+    
+    setDeleteModal({ isOpen: false, billId: null, billName: '', isMultiple: false });
+  };
+
+  // Handle bill selection
+  const handleSelectBill = (billId) => {
+    setSelectedBills(prev => 
+      prev.includes(billId) 
+        ? prev.filter(id => id !== billId)
+        : [...prev, billId]
+    );
+  };
+
+  const handleSelectAll = () => {
+    const allBillIds = filteredAndSortedBills.map(bill => bill.id);
+    setSelectedBills(prev => 
+      prev.length === allBillIds.length ? [] : allBillIds
+    );
+  };
+
+  // Handle bulk actions
+  const handleMarkAllPaid = async () => {
+    try {
+      const updatePromises = selectedBills.map(billId => 
+        billService.toggleBillPayment(billId, true)
+      );
+      await Promise.all(updatePromises);
+      
+      setBills(prevBills => 
+        prevBills.map(bill => 
+          selectedBills.includes(bill.id) 
+            ? { ...bill, status: 'paid', isPaid: true }
+            : bill
+        )
+      );
+      setSelectedBills([]);
+    } catch (error) {
+      setError('Failed to mark bills as paid');
+      console.log('Bulk mark paid error:', error);
+    }
+  };
+
+  const handleMarkAllUnpaid = async () => {
+    try {
+      const updatePromises = selectedBills.map(billId => 
+        billService.toggleBillPayment(billId, false)
+      );
+      await Promise.all(updatePromises);
+      
+      setBills(prevBills => 
+        prevBills.map(bill => 
+          selectedBills.includes(bill.id) 
+            ? { ...bill, status: 'unpaid', isPaid: false }
+            : bill
+        )
+      );
+      setSelectedBills([]);
+    } catch (error) {
+      setError('Failed to mark bills as unpaid');
+      console.log('Bulk mark unpaid error:', error);
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    setDeleteModal({
+      isOpen: true,
+      billId: null,
+      billName: '',
+      isMultiple: true
+    });
+  };
+
+  const handleClearSelection = () => {
+    setSelectedBills([]);
+  };
+
+  // Handle filters
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setStatusFilter('all');
+    setSortBy('dueDate');
+  };
+
+  // Responsive view handling
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setCurrentView('cards');
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Show loading state
+  if (authLoading || loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto px-4 py-6">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <Icon name="Loader2" size={32} className="animate-spin mx-auto mb-4 text-primary" />
+              <p className="text-slate-600">Loading bills...</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto px-4 py-6">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <Icon name="AlertCircle" size={32} className="mx-auto mb-4 text-red-500" />
+              <p className="text-slate-600 mb-4">{error}</p>
+              <Button onClick={() => window.location.reload()}>
+                Retry
+              </Button>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      
+      <main className="container mx-auto px-4 py-6">
+        <Breadcrumb />
+        
+        {/* Page Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Bill Management</h1>
+            <p className="text-muted-foreground">
+              Track and manage your monthly bills and payments
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            {/* View Toggle - Hidden on mobile */}
+            <div className="hidden lg:block">
+              <ViewToggle 
+                currentView={currentView}
+                onViewChange={setCurrentView}
+              />
+            </div>
+            
+            <Button
+              variant="default"
+              onClick={() => navigate('/add-edit-bill')}
+              iconName="Plus"
+              iconPosition="left"
+              iconSize={18}
+            >
+              Add New Bill
+            </Button>
+          </div>
+        </div>
+
+        {/* Filter Bar */}
+        <FilterBar
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          totalCount={bills?.length || 0}
+          filteredCount={filteredAndSortedBills?.length || 0}
+          onClearFilters={handleClearFilters}
+        />
+
+        {/* Bulk Actions */}
+        <BulkActions
+          selectedCount={selectedBills?.length || 0}
+          onMarkAllPaid={handleMarkAllPaid}
+          onMarkAllUnpaid={handleMarkAllUnpaid}
+          onDeleteSelected={handleDeleteSelected}
+          onClearSelection={handleClearSelection}
+        />
+
+        {/* Bills Display */}
+        {filteredAndSortedBills?.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="Receipt" size={32} className="text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-2">No bills found</h3>
+            <p className="text-muted-foreground mb-4">
+              {searchTerm || statusFilter !== 'all' ?'Try adjusting your filters or search terms' :'Get started by adding your first bill'
+              }
+            </p>
+            {!searchTerm && statusFilter === 'all' && (
+              <Button
+                variant="default"
+                onClick={() => navigate('/add-edit-bill')}
+                iconName="Plus"
+                iconPosition="left"
+                iconSize={18}
+              >
+                Add Your First Bill
+              </Button>
+            )}
+          </div>
+        ) : (
+          <>
+            {/* Cards View */}
+            {currentView === 'cards' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredAndSortedBills.map(bill => (
+                  <BillCard
+                    key={bill.id}
+                    bill={bill}
+                    onTogglePayment={handleTogglePayment}
+                    onEdit={handleEditBill}
+                    onDelete={handleDeleteBill}
+                    onSelect={handleSelectBill}
+                    isSelected={selectedBills.includes(bill.id)}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Table View */}
+            {currentView === 'table' && (
+              <div className="bg-card border rounded-lg overflow-hidden">
+                <BillTable
+                  bills={filteredAndSortedBills}
+                  onTogglePayment={handleTogglePayment}
+                  onEdit={handleEditBill}
+                  onDelete={handleDeleteBill}
+                  onSelect={handleSelectBill}
+                  selectedBills={selectedBills}
+                  onSelectAll={handleSelectAll}
+                />
+              </div>
+            )}
+          </>
+        )}
+      </main>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ isOpen: false, billId: null, billName: '', isMultiple: false })}
+        onConfirm={confirmDelete}
+        billName={deleteModal.billName}
+        isMultiple={deleteModal.isMultiple}
+        count={selectedBills?.length || 0}
+      />
+    </div>
+  );
+};
+
+export default BillManagement;

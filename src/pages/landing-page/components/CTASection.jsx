@@ -1,0 +1,128 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import Button from '../../../components/ui/Button';
+import Icon from '../../../components/AppIcon';
+
+const CTASection = () => {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate('/registration-screen');
+  };
+
+  const handleLogin = () => {
+    navigate('/login-screen');
+  };
+
+  return (
+    <section className="py-16 lg:py-24 bg-gradient-to-br from-primary to-accent">
+      <div className="container mx-auto px-4 lg:px-6">
+        <div className="text-center">
+          {/* Main CTA Content */}
+          <div className="max-w-4xl mx-auto mb-12">
+            <h2 className="text-3xl lg:text-5xl font-bold text-white mb-6">
+              Start Managing Your Bills
+              <span className="block">Like a Pro Today</span>
+            </h2>
+            <p className="text-lg lg:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+              Join thousands of users who have taken control of their monthly expenses. Get organized, save money, and never miss a payment again.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={handleGetStarted}
+                iconName="ArrowRight"
+                iconPosition="right"
+                className="text-lg px-8 py-4 bg-white text-primary hover:bg-gray-50"
+              >
+                Get Started Free
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={handleLogin}
+                iconName="LogIn"
+                iconPosition="left"
+                className="text-lg px-8 py-4 border-white text-white hover:bg-white/10"
+              >
+                Sign In
+              </Button>
+            </div>
+
+            {/* Value Props */}
+            <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+              <div className="flex items-center justify-center text-white/90">
+                <Icon name="CheckCircle" size={20} className="mr-2 text-white" />
+                <span className="text-sm font-medium">Free to Start</span>
+              </div>
+              <div className="flex items-center justify-center text-white/90">
+                <Icon name="Shield" size={20} className="mr-2 text-white" />
+                <span className="text-sm font-medium">Secure & Private</span>
+              </div>
+              <div className="flex items-center justify-center text-white/90">
+                <Icon name="Smartphone" size={20} className="mr-2 text-white" />
+                <span className="text-sm font-medium">Works Everywhere</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Feature Highlights */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 lg:p-12 max-w-5xl mx-auto">
+            <h3 className="text-2xl font-bold text-white mb-8">
+              What You'll Get With BillTracker Pro
+            </h3>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
+                  <Icon name="Receipt" size={28} className="text-white" />
+                </div>
+                <h4 className="font-semibold text-white mb-2">Bill Organization</h4>
+                <p className="text-sm text-white/80">Keep all bills in one place</p>
+              </div>
+
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
+                  <Icon name="Bell" size={28} className="text-white" />
+                </div>
+                <h4 className="font-semibold text-white mb-2">Due Date Alerts</h4>
+                <p className="text-sm text-white/80">Never miss a payment</p>
+              </div>
+
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
+                  <Icon name="BarChart3" size={28} className="text-white" />
+                </div>
+                <h4 className="font-semibold text-white mb-2">Financial Insights</h4>
+                <p className="text-sm text-white/80">Track spending patterns</p>
+              </div>
+
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
+                  <Icon name="Repeat" size={28} className="text-white" />
+                </div>
+                <h4 className="font-semibold text-white mb-2">Recurring Bills</h4>
+                <p className="text-sm text-white/80">Automate bill tracking</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Final Encouragement */}
+          <div className="mt-12 text-center">
+            <p className="text-white/90 text-lg mb-4">
+              Ready to take control of your finances?
+            </p>
+            <p className="text-white/70 text-sm">
+              It takes less than 2 minutes to get started. No credit card required.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default CTASection;
