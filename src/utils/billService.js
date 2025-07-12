@@ -65,9 +65,13 @@ class BillService {
   // Create a new bill
   async createBill(userId, billData) {
     try {
+      console.log('🔍 Creating bill with data:', billData);
+      
       // If this is a recurring bill, create multiple individual bills
       if (billData.isRecurring) {
+        console.log('🔄 Creating recurring bill with frequency:', billData.frequency);
         const bills = this.generateRecurringBillInstances(userId, billData);
+        console.log('📅 Generated', bills.length, 'recurring bill instances');
         
         const { data, error } = await supabase
           .from('bills')
@@ -75,11 +79,14 @@ class BillService {
           .select();
 
         if (error) {
+          console.error('❌ Error creating recurring bills:', error);
           return { success: false, error: error.message };
         }
 
+        console.log('✅ Successfully created', data.length, 'recurring bills');
         return { success: true, data: data[0] }; // Return the first bill as the "main" one
       } else {
+        console.log('📝 Creating single bill');
         // Create a single bill
         const { data, error } = await supabase
           .from('bills')
@@ -98,12 +105,15 @@ class BillService {
           .single();
 
         if (error) {
+          console.error('❌ Error creating single bill:', error);
           return { success: false, error: error.message };
         }
 
+        console.log('✅ Successfully created single bill');
         return { success: true, data };
       }
     } catch (error) {
+      console.error('❌ JavaScript error in createBill:', error);
       if (error?.message?.includes('Failed to fetch') || 
           error?.message?.includes('NetworkError')) {
         return { 
@@ -111,17 +121,24 @@ class BillService {
           error: 'Cannot connect to database. Please check your internet connection.' 
         };
       }
-      console.log('JavaScript error in createBill:', error);
       return { success: false, error: 'Failed to create bill' };
     }
   }
 
   // Generate recurring bill instances
   generateRecurringBillInstances(userId, billData) {
+    console.log('🔄 Generating recurring bill instances for:', billData.name);
+    console.log('📅 Start date:', billData.dueDate);
+    console.log('🔄 Frequency:', billData.frequency);
+    console.log('📅 End date:', billData.endDate);
+    
     const bills = [];
     const startDate = new Date(billData.dueDate);
     const end = billData.endDate ? new Date(billData.endDate) : null;
     const frequency = billData.frequency || 'monthly';
+    
+    console.log('📅 Parsed start date:', startDate);
+    console.log('📅 Parsed end date:', end);
     
     // Generate bills for the next 12 months (or until end date)
     for (let i = 0; i < 52; i++) { // Max 52 weeks for weekly bills
@@ -146,15 +163,17 @@ class BillService {
       
       // Stop if we've reached the end date
       if (end && nextDate > end) {
+        console.log('📅 Stopping at end date:', end);
         break;
       }
       
       // Stop if we've generated too many bills (safety check)
       if (i > 52) {
+        console.log('📅 Stopping at max limit (52)');
         break;
       }
       
-      bills.push({
+      const billInstance = {
         user_id: userId,
         name: billData.name,
         category: billData.category,
@@ -164,9 +183,13 @@ class BillService {
         status: 'unpaid',
         is_recurring: false, // These are individual instances
         notes: billData.notes || ''
-      });
+      };
+      
+      bills.push(billInstance);
+      console.log(`📅 Generated bill ${i + 1}:`, billInstance.due_date);
     }
     
+    console.log('✅ Total bills generated:', bills.length);
     return bills;
   }
 
@@ -360,6 +383,8 @@ class BillService {
         isPaid: data.status === 'paid',
         isOverdue: data.status === 'overdue',
         isRecurring: data.is_recurring,
+        frequency: data.frequency,
+        endDate: data.end_date,
         notes: data.notes,
         createdAt: data.created_at,
         updatedAt: data.updated_at

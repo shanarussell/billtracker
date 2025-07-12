@@ -62,8 +62,8 @@ const BillForm = () => {
           amount: billFromState.amount?.toString() || '',
           dueDate: billFromState.dueDate || '',
           isRecurring: billFromState.isRecurring || false,
-          frequency: 'monthly', // Default since we don't store this
-          endDate: '', // Default since we don't store this
+          frequency: billFromState.frequency || 'monthly', // Try to get frequency from bill
+          endDate: billFromState.endDate || '', // Try to get endDate from bill
           notes: billFromState.notes || '',
           reminderDays: '3' // Default since we don't store this
         });
@@ -84,8 +84,8 @@ const BillForm = () => {
             amount: bill.amount?.toString() || '',
             dueDate: bill.dueDate || '',
             isRecurring: bill.isRecurring || false,
-            frequency: 'monthly', // Default since we don't store this
-            endDate: '', // Default since we don't store this
+            frequency: bill.frequency || 'monthly', // Try to get frequency from bill
+            endDate: bill.endDate || '', // Try to get endDate from bill
             notes: bill.notes || '',
             reminderDays: '3' // Default since we don't store this
           });
@@ -172,6 +172,10 @@ const BillForm = () => {
         notes: formData.notes || ''
       };
 
+      console.log('📝 Submitting bill data:', billData);
+      console.log('🔄 Is recurring:', billData.isRecurring);
+      console.log('📅 Frequency:', billData.frequency);
+
       let result;
       if (isEditMode) {
         const editBillId = billId || billFromState?.id;
@@ -181,6 +185,7 @@ const BillForm = () => {
       }
       
       if (result?.success) {
+        console.log('✅ Bill saved successfully:', result.data);
         // Navigate back to dashboard with success message
         navigate('/dashboard', {
           state: { 
@@ -189,10 +194,11 @@ const BillForm = () => {
           }
         });
       } else {
+        console.error('❌ Failed to save bill:', result?.error);
         setErrors({ submit: result?.error || 'Failed to save bill. Please try again.' });
       }
     } catch (error) {
-      console.error('Error saving bill:', error);
+      console.error('❌ Error saving bill:', error);
       setErrors({ submit: 'Failed to save bill. Please try again.' });
     } finally {
       setIsLoading(false);
