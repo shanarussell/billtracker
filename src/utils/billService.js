@@ -65,27 +65,44 @@ class BillService {
   // Create a new bill
   async createBill(userId, billData) {
     try {
-      const { data, error } = await supabase
-        .from('bills')
-        .insert({
-          user_id: userId,
-          name: billData.name,
-          category: billData.category,
-          amount: billData.amount,
-          due_date: billData.dueDate,
-          payment_method_id: billData.paymentMethodId,
-          status: billData.status || 'unpaid',
-          is_recurring: billData.isRecurring || false,
-          notes: billData.notes || ''
-        })
-        .select()
-        .single();
+      // If this is a recurring bill, create multiple individual bills
+      if (billData.isRecurring) {
+        const bills = this.generateRecurringBillInstances(userId, billData);
+        
+        const { data, error } = await supabase
+          .from('bills')
+          .insert(bills)
+          .select();
 
-      if (error) {
-        return { success: false, error: error.message };
+        if (error) {
+          return { success: false, error: error.message };
+        }
+
+        return { success: true, data: data[0] }; // Return the first bill as the "main" one
+      } else {
+        // Create a single bill
+        const { data, error } = await supabase
+          .from('bills')
+          .insert({
+            user_id: userId,
+            name: billData.name,
+            category: billData.category,
+            amount: billData.amount,
+            due_date: billData.dueDate,
+            payment_method_id: billData.paymentMethodId,
+            status: billData.status || 'unpaid',
+            is_recurring: false, // Individual bills are not recurring
+            notes: billData.notes || ''
+          })
+          .select()
+          .single();
+
+        if (error) {
+          return { success: false, error: error.message };
+        }
+
+        return { success: true, data };
       }
-
-      return { success: true, data };
     } catch (error) {
       if (error?.message?.includes('Failed to fetch') || 
           error?.message?.includes('NetworkError')) {
@@ -97,6 +114,60 @@ class BillService {
       console.log('JavaScript error in createBill:', error);
       return { success: false, error: 'Failed to create bill' };
     }
+  }
+
+  // Generate recurring bill instances
+  generateRecurringBillInstances(userId, billData) {
+    const bills = [];
+    const startDate = new Date(billData.dueDate);
+    const end = billData.endDate ? new Date(billData.endDate) : null;
+    const frequency = billData.frequency || 'monthly';
+    
+    // Generate bills for the next 12 months (or until end date)
+    for (let i = 0; i < 52; i++) { // Max 52 weeks for weekly bills
+      const nextDate = new Date(startDate);
+      
+      switch (frequency) {
+        case 'weekly':
+          nextDate.setDate(startDate.getDate() + (i * 7));
+          break;
+        case 'monthly':
+          nextDate.setMonth(startDate.getMonth() + i);
+          break;
+        case 'quarterly':
+          nextDate.setMonth(startDate.getMonth() + (i * 3));
+          break;
+        case 'annually':
+          nextDate.setFullYear(startDate.getFullYear() + i);
+          break;
+        default:
+          nextDate.setMonth(startDate.getMonth() + i);
+      }
+      
+      // Stop if we've reached the end date
+      if (end && nextDate > end) {
+        break;
+      }
+      
+      // Stop if we've generated too many bills (safety check)
+      if (i > 52) {
+        break;
+      }
+      
+      bills.push({
+        user_id: userId,
+        name: billData.name,
+        category: billData.category,
+        amount: billData.amount,
+        due_date: nextDate.toISOString().split('T')[0], // Format as YYYY-MM-DD
+        payment_method_id: billData.paymentMethodId,
+        status: 'unpaid',
+        is_recurring: false, // These are individual instances
+        notes: billData.notes || ''
+      });
+    }
+    
+    return bills;
   }
 
   // Update an existing bill

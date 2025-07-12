@@ -167,6 +167,8 @@ const BillForm = () => {
         dueDate: formData.dueDate,
         status: 'unpaid',
         isRecurring: formData.isRecurring,
+        frequency: formData.frequency,
+        endDate: formData.endDate || null,
         notes: formData.notes || ''
       };
 
