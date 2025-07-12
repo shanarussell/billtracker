@@ -433,7 +433,7 @@ const Dashboard = () => {
               <p className="text-sm text-slate-600">Pending</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-red-600">{metrics?.overdueBills || 0}</p>
+              <p className="text-2xl font-bold text-red-600">{bills?.filter(bill => bill.isOverdue).length || 0}</p>
               <p className="text-sm text-slate-600">Overdue</p>
             </div>
             <div className="text-center">
