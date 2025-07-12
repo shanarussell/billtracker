@@ -9,6 +9,7 @@ import UpcomingBillCard from './components/UpcomingBillCard';
 import QuickActions from './components/QuickActions';
 import SpendingChart from './components/SpendingChart';
 import AlertNotifications from './components/AlertNotifications';
+import PaymentModal from '../../components/ui/PaymentModal';
 import Button from '../../components/ui/Button';
 import Icon from '../../components/AppIcon';
 
@@ -19,6 +20,7 @@ const Dashboard = () => {
   const [metrics, setMetrics] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [paymentModal, setPaymentModal] = useState({ isOpen: false, bill: null });
 
   useEffect(() => {
     let isMounted = true;
@@ -70,14 +72,52 @@ const Dashboard = () => {
     const bill = bills.find(b => b.id === billId);
     if (!bill) return;
 
+    // If bill is already paid, just toggle it to unpaid
+    if (bill.isPaid) {
+      try {
+        const result = await billService.toggleBillPayment(billId, false);
+        
+        if (result?.success) {
+          setBills(prevBills =>
+            prevBills.map(b =>
+              b.id === billId
+                ? { ...b, isPaid: false, status: 'unpaid', isOverdue: b.isOverdue }
+                : b
+            )
+          );
+          
+          // Reload metrics
+          const metricsResult = await billService.getFinancialMetrics(user.id);
+          if (metricsResult?.success) {
+            setMetrics(metricsResult.data);
+          }
+        } else {
+          setError(result?.error || 'Failed to update payment status');
+        }
+      } catch (error) {
+        setError('Failed to update payment status');
+        console.log('Toggle payment error:', error);
+      }
+    } else {
+      // If bill is unpaid, show payment modal
+      setPaymentModal({ isOpen: true, bill });
+    }
+  };
+
+  const handlePaymentConfirm = async (paymentDetails) => {
     try {
-      const result = await billService.toggleBillPayment(billId, !bill.isPaid);
+      const result = await billService.markBillAsPaid(paymentModal.bill.id, paymentDetails);
       
       if (result?.success) {
-        setBills(prevBills =>
-          prevBills.map(b =>
-            b.id === billId
-              ? { ...b, isPaid: !b.isPaid, status: !b.isPaid ? 'paid' : 'unpaid', isOverdue: !b.isPaid ? false : b.isOverdue }
+        setBills(prevBills => 
+          prevBills.map(b => 
+            b.id === paymentModal.bill.id 
+              ? { 
+                  ...b, 
+                  isPaid: true, 
+                  status: 'paid',
+                  paymentMethod: paymentDetails.paymentMethodName
+                }
               : b
           )
         );
@@ -88,11 +128,11 @@ const Dashboard = () => {
           setMetrics(metricsResult.data);
         }
       } else {
-        setError(result?.error || 'Failed to update payment status');
+        setError(result?.error || 'Failed to mark bill as paid');
       }
     } catch (error) {
-      setError('Failed to update payment status');
-      console.log('Toggle payment error:', error);
+      setError('Failed to mark bill as paid');
+      console.log('Payment error:', error);
     }
   };
 
@@ -299,6 +339,15 @@ const Dashboard = () => {
           </div>
         </div>
       </main>
+
+      {/* Payment Modal */}
+      <PaymentModal
+        isOpen={paymentModal.isOpen}
+        onClose={() => setPaymentModal({ isOpen: false, bill: null })}
+        onConfirm={handlePaymentConfirm}
+        bill={paymentModal.bill}
+        currentUser={user}
+      />
     </div>
   );
 };

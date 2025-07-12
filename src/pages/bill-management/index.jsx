@@ -10,6 +10,7 @@ import BillTable from './components/BillTable';
 import FilterBar from './components/FilterBar';
 import BulkActions from './components/BulkActions';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
+import PaymentModal from '../../components/ui/PaymentModal';
 import ViewToggle from './components/ViewToggle';
 import Icon from '../../components/AppIcon';
 
@@ -28,6 +29,7 @@ const BillManagement = () => {
   const [selectedBills, setSelectedBills] = useState([]);
   const [currentView, setCurrentView] = useState('cards');
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, billId: null, billName: '', isMultiple: false });
+  const [paymentModal, setPaymentModal] = useState({ isOpen: false, bill: null });
 
   // Load bills
   useEffect(() => {
@@ -110,23 +112,55 @@ const BillManagement = () => {
     const bill = bills.find(b => b.id === billId);
     if (!bill) return;
 
+    // If bill is already paid, just toggle it to unpaid
+    if (bill.isPaid) {
+      try {
+        const result = await billService.toggleBillPayment(billId, false);
+        
+        if (result?.success) {
+          setBills(prevBills => 
+            prevBills.map(b => 
+              b.id === billId 
+                ? { ...b, isPaid: false, status: 'unpaid' }
+                : b
+            )
+          );
+        } else {
+          setError(result?.error || 'Failed to update payment status');
+        }
+      } catch (error) {
+        setError('Failed to update payment status');
+        console.log('Toggle payment error:', error);
+      }
+    } else {
+      // If bill is unpaid, show payment modal
+      setPaymentModal({ isOpen: true, bill });
+    }
+  };
+
+  const handlePaymentConfirm = async (paymentDetails) => {
     try {
-      const result = await billService.toggleBillPayment(billId, !bill.isPaid);
+      const result = await billService.markBillAsPaid(paymentModal.bill.id, paymentDetails);
       
       if (result?.success) {
         setBills(prevBills => 
           prevBills.map(b => 
-            b.id === billId 
-              ? { ...b, isPaid: !b.isPaid, status: !b.isPaid ? 'paid' : 'unpaid' }
+            b.id === paymentModal.bill.id 
+              ? { 
+                  ...b, 
+                  isPaid: true, 
+                  status: 'paid',
+                  paymentMethod: paymentDetails.paymentMethodName
+                }
               : b
           )
         );
       } else {
-        setError(result?.error || 'Failed to update payment status');
+        setError(result?.error || 'Failed to mark bill as paid');
       }
     } catch (error) {
-      setError('Failed to update payment status');
-      console.log('Toggle payment error:', error);
+      setError('Failed to mark bill as paid');
+      console.log('Payment error:', error);
     }
   };
 
@@ -189,24 +223,9 @@ const BillManagement = () => {
 
   // Handle bulk actions
   const handleMarkAllPaid = async () => {
-    try {
-      const updatePromises = selectedBills.map(billId => 
-        billService.toggleBillPayment(billId, true)
-      );
-      await Promise.all(updatePromises);
-      
-      setBills(prevBills => 
-        prevBills.map(bill => 
-          selectedBills.includes(bill.id) 
-            ? { ...bill, status: 'paid', isPaid: true }
-            : bill
-        )
-      );
-      setSelectedBills([]);
-    } catch (error) {
-      setError('Failed to mark bills as paid');
-      console.log('Bulk mark paid error:', error);
-    }
+    // For now, show a message that individual payment is required
+    setError('Please mark bills as paid individually to specify payment amounts and methods');
+    setSelectedBills([]);
   };
 
   const handleMarkAllUnpaid = async () => {
@@ -427,6 +446,15 @@ const BillManagement = () => {
         billName={deleteModal.billName}
         isMultiple={deleteModal.isMultiple}
         count={selectedBills?.length || 0}
+      />
+
+      {/* Payment Modal */}
+      <PaymentModal
+        isOpen={paymentModal.isOpen}
+        onClose={() => setPaymentModal({ isOpen: false, bill: null })}
+        onConfirm={handlePaymentConfirm}
+        bill={paymentModal.bill}
+        currentUser={user}
       />
     </div>
   );

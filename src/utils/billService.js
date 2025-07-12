@@ -169,11 +169,6 @@ class BillService {
         return { success: false, error: error.message };
       }
 
-      // If marking as paid, create a payment record
-      if (isPaid) {
-        await this.createBillPayment(billId, data.amount, data.payment_method_id);
-      }
-
       return { success: true, data };
     } catch (error) {
       if (error?.message?.includes('Failed to fetch') || 
@@ -185,6 +180,48 @@ class BillService {
       }
       console.log('JavaScript error in toggleBillPayment:', error);
       return { success: false, error: 'Failed to update payment status' };
+    }
+  }
+
+  // Mark bill as paid with payment details
+  async markBillAsPaid(billId, paymentDetails) {
+    try {
+      const { data, error } = await supabase
+        .from('bills')
+        .update({ 
+          status: 'paid',
+          payment_method_id: paymentDetails.paymentMethodId
+        })
+        .eq('id', billId)
+        .select()
+        .single();
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      // Create payment record
+      const paymentResult = await this.createBillPayment(
+        billId, 
+        paymentDetails.amount, 
+        paymentDetails.paymentMethodId
+      );
+
+      if (!paymentResult.success) {
+        return paymentResult;
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      if (error?.message?.includes('Failed to fetch') || 
+          error?.message?.includes('NetworkError')) {
+        return { 
+          success: false, 
+          error: 'Cannot connect to database. Please check your internet connection.' 
+        };
+      }
+      console.log('JavaScript error in markBillAsPaid:', error);
+      return { success: false, error: 'Failed to mark bill as paid' };
     }
   }
 
