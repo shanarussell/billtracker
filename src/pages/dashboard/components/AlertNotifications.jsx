@@ -3,6 +3,17 @@ import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 
 const AlertNotifications = ({ bills = [], dismissedAlerts = new Set(), onDismiss, onViewBill }) => {
+  // Helper function to calculate if a bill is overdue
+  const calculateIsOverdue = (bill) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to start of day
+    const [year, month, day] = bill.dueDate.split('-').map(Number);
+    const dueDate = new Date(year, month - 1, day);
+    dueDate.setHours(0, 0, 0, 0); // Reset time to start of day
+    
+    return bill.status !== 'paid' && dueDate < today;
+  };
+
   // Generate real alerts from bills data
   const alertsToShow = useMemo(() => {
     if (!bills || bills.length === 0) return [];
@@ -20,7 +31,7 @@ const AlertNotifications = ({ bills = [], dismissedAlerts = new Set(), onDismiss
       const daysUntilDue = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
 
       // Overdue bills
-      if (bill.status !== 'paid' && dueDate < today) {
+      if (calculateIsOverdue(bill)) {
         const daysOverdue = Math.abs(daysUntilDue);
         alerts.push({
           id: `overdue-${bill.id}`,

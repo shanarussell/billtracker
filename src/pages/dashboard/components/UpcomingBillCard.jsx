@@ -4,15 +4,26 @@ import Button from '../../../components/ui/Button';
 import { formatDate } from '../../../utils/cn';
 
 const UpcomingBillCard = ({ bill, onTogglePayment, onEdit }) => {
+  // Helper function to calculate if a bill is overdue
+  const calculateIsOverdue = (bill) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to start of day
+    const [year, month, day] = bill.dueDate.split('-').map(Number);
+    const dueDate = new Date(year, month - 1, day);
+    dueDate.setHours(0, 0, 0, 0); // Reset time to start of day
+    
+    return bill.status !== 'paid' && dueDate < today;
+  };
+
   const getStatusColor = () => {
     if (bill.isPaid) return 'bg-green-100 text-green-800 border-green-200';
-    if (bill.isOverdue) return 'bg-red-100 text-red-800 border-red-200';
+    if (calculateIsOverdue(bill)) return 'bg-red-100 text-red-800 border-red-200';
     return 'bg-slate-100 text-slate-800 border-slate-200';
   };
 
   const getStatusIcon = () => {
     if (bill.isPaid) return 'CheckCircle';
-    if (bill.isOverdue) return 'AlertCircle';
+    if (calculateIsOverdue(bill)) return 'AlertCircle';
     return 'Clock';
   };
 
@@ -53,7 +64,7 @@ const UpcomingBillCard = ({ bill, onTogglePayment, onEdit }) => {
         <div className="flex items-center space-x-2">
           <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor()}`}>
             <Icon name={getStatusIcon()} size={12} className="mr-1" />
-            {bill.isPaid ? 'Paid' : bill.isOverdue ? 'Overdue' : 'Pending'}
+            {bill.isPaid ? 'Paid' : calculateIsOverdue(bill) ? 'Overdue' : 'Pending'}
           </span>
           <span className="text-xs text-slate-500">{getDaysUntilDue()}</span>
         </div>

@@ -99,7 +99,12 @@ const Dashboard = () => {
           setBills(prevBills =>
             prevBills.map(b =>
               b.id === billId
-                ? { ...b, isPaid: false, status: 'unpaid', isOverdue: b.isOverdue }
+                ? { 
+                    ...b, 
+                    isPaid: false, 
+                    status: 'unpaid', 
+                    isOverdue: calculateIsOverdue({ ...b, status: 'unpaid' })
+                  }
                 : b
             )
           );
@@ -134,6 +139,7 @@ const Dashboard = () => {
                   ...b, 
                   isPaid: true, 
                   status: 'paid',
+                  isOverdue: false, // Paid bills are never overdue
                   paymentMethod: paymentDetails.paymentMethodName
                 }
               : b
@@ -225,6 +231,17 @@ const Dashboard = () => {
     }
   };
 
+  // Helper function to calculate if a bill is overdue
+  const calculateIsOverdue = (bill) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to start of day
+    const [year, month, day] = bill.dueDate.split('-').map(Number);
+    const dueDate = new Date(year, month - 1, day);
+    dueDate.setHours(0, 0, 0, 0); // Reset time to start of day
+    
+    return bill.status !== 'paid' && dueDate < today;
+  };
+
   // Helper function to check if a date is in the selected month
   const isInSelectedMonth = (dateString) => {
     const [year, month, day] = dateString.split('-').map(Number);
@@ -239,7 +256,7 @@ const Dashboard = () => {
 
   // Get overdue bills (bills that are overdue) for selected month
   const overdueBills = filteredBills
-    ?.filter(bill => bill.isOverdue)
+    ?.filter(bill => calculateIsOverdue(bill))
     .sort((a, b) => {
       const [ay, am, ad] = a.dueDate.split('-').map(Number);
       const [by, bm, bd] = b.dueDate.split('-').map(Number);
@@ -248,7 +265,7 @@ const Dashboard = () => {
 
   // Get upcoming bills (bills that are not overdue, next 5) for selected month
   const upcomingBills = filteredBills
-    ?.filter(bill => !bill.isOverdue)
+    ?.filter(bill => !calculateIsOverdue(bill))
     .sort((a, b) => {
       const [ay, am, ad] = a.dueDate.split('-').map(Number);
       const [by, bm, bd] = b.dueDate.split('-').map(Number);
