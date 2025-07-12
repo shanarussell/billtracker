@@ -406,11 +406,12 @@ const BillManagement = () => {
             </div>
             
             <Button
-              variant="outline"
+              variant="default"
               onClick={handleAddDeposit}
               iconName="DollarSign"
               iconPosition="left"
               iconSize={18}
+              className="bg-green-600 hover:bg-green-700 text-white"
             >
               Add Deposit
             </Button>

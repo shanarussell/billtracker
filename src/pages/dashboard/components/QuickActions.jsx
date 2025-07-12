@@ -43,7 +43,7 @@ const QuickActions = ({ onAddDeposit }) => {
         </Button>
         
         <Button
-          variant="outline"
+          variant="success"
           onClick={onAddDeposit}
           iconName="DollarSign"
           iconPosition="left"
