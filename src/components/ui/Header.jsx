@@ -136,18 +136,8 @@ const Header = ({ onAddDeposit }) => {
               <div className="absolute right-0 mt-2 w-48 rounded-md border bg-popover shadow-elevation-2 z-50">
                 <div className="py-1">
                   <div className="px-3 py-2 text-sm text-muted-foreground border-b">
-                    john.doe@example.com
+                    {user?.email || 'User'}
                   </div>
-                  <button
-                    onClick={() => {
-                      setIsUserMenuOpen(false);
-                      // Handle profile navigation
-                    }}
-                    className="flex w-full items-center px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors duration-200"
-                  >
-                    <Icon name="Settings" size={16} className="mr-2" />
-                    Settings
-                  </button>
                   <button
                     onClick={handleLogout}
                     className="flex w-full items-center px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors duration-200"
