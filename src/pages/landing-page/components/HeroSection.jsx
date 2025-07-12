@@ -101,7 +101,7 @@ const HeroSection = () => {
           <div className="relative">
             <div className="relative bg-white rounded-2xl shadow-2xl p-6 lg:p-8">
               <Image
-                src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                src="/assets/images/bill-tracker-screenshots-1.png"
                 alt="Easy Bill Tracker Dashboard Preview"
                 className="w-full h-auto rounded-lg"
               />

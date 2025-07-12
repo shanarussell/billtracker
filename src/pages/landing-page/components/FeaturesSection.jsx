@@ -83,37 +83,7 @@ const FeaturesSection = () => {
           ))}
         </div>
 
-        {/* Bottom CTA */}
-        <div className="text-center mt-16">
-          <div className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-8 lg:p-12">
-            <h3 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
-              Ready to Track Your Finances?
-            </h3>
-            <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Join users who have simplified their financial tracking with Easy Bill Tracker.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <div className="bg-white rounded-lg p-4 shadow-sm">
-                <div className="flex items-center justify-center">
-                  <Icon name="Shield" size={20} className="text-success mr-2" />
-                  <span className="text-sm font-medium text-foreground">Bank-Level Security</span>
-                </div>
-              </div>
-              <div className="bg-white rounded-lg p-4 shadow-sm">
-                <div className="flex items-center justify-center">
-                  <Icon name="Smartphone" size={20} className="text-primary mr-2" />
-                  <span className="text-sm font-medium text-foreground">Mobile Responsive</span>
-                </div>
-              </div>
-              <div className="bg-white rounded-lg p-4 shadow-sm">
-                <div className="flex items-center justify-center">
-                  <Icon name="Clock" size={20} className="text-accent mr-2" />
-                  <span className="text-sm font-medium text-foreground">Real-time Updates</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+
       </div>
     </section>
   );

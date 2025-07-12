@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
+import Image from '../../../components/AppImage';
 
 const CTASection = () => {
   const navigate = useNavigate();
@@ -69,43 +70,59 @@ const CTASection = () => {
             </div>
           </div>
 
-          {/* Feature Highlights */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 lg:p-12 max-w-5xl mx-auto">
-            <h3 className="text-2xl font-bold text-white mb-8">
-              What You'll Get With Easy Bill Tracker
-            </h3>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
-                  <Icon name="Receipt" size={28} className="text-white" />
+          {/* Feature Highlights with Screenshot */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 lg:p-12 max-w-6xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              {/* Screenshot */}
+              <div className="order-2 lg:order-1">
+                <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
+                  <Image
+                    src="/assets/images/bill-tracker-screenshots-5.png"
+                    alt="Easy Bill Tracker Financial Summary"
+                    className="w-full h-auto"
+                  />
                 </div>
-                <h4 className="font-semibold text-white mb-2">Bill & Income Tracking</h4>
-                <p className="text-sm text-white/80">Manage both in one place</p>
               </div>
+              
+              {/* Features */}
+              <div className="order-1 lg:order-2">
+                <h3 className="text-2xl font-bold text-white mb-8">
+                  What You'll Get With Easy Bill Tracker
+                </h3>
+                
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="text-center">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
+                      <Icon name="Receipt" size={28} className="text-white" />
+                    </div>
+                    <h4 className="font-semibold text-white mb-2">Bill & Income Tracking</h4>
+                    <p className="text-sm text-white/80">Manage both in one place</p>
+                  </div>
 
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
-                  <Icon name="Repeat" size={28} className="text-white" />
-                </div>
-                <h4 className="font-semibold text-white mb-2">Recurring Bills</h4>
-                <p className="text-sm text-white/80">Weekly to annual frequencies</p>
-              </div>
+                  <div className="text-center">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
+                      <Icon name="Repeat" size={28} className="text-white" />
+                    </div>
+                    <h4 className="font-semibold text-white mb-2">Recurring Bills</h4>
+                    <p className="text-sm text-white/80">Weekly to annual frequencies</p>
+                  </div>
 
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
-                  <Icon name="CheckCircle" size={28} className="text-white" />
-                </div>
-                <h4 className="font-semibold text-white mb-2">Payment Tracking</h4>
-                <p className="text-sm text-white/80">Mark paid/unpaid status</p>
-              </div>
+                  <div className="text-center">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
+                      <Icon name="CheckCircle" size={28} className="text-white" />
+                    </div>
+                    <h4 className="font-semibold text-white mb-2">Payment Tracking</h4>
+                    <p className="text-sm text-white/80">Mark paid/unpaid status</p>
+                  </div>
 
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
-                  <Icon name="BarChart3" size={28} className="text-white" />
+                  <div className="text-center">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
+                      <Icon name="BarChart3" size={28} className="text-white" />
+                    </div>
+                    <h4 className="font-semibold text-white mb-2">Financial Metrics</h4>
+                    <p className="text-sm text-white/80">Income vs expenses view</p>
+                  </div>
                 </div>
-                <h4 className="font-semibold text-white mb-2">Financial Metrics</h4>
-                <p className="text-sm text-white/80">Income vs expenses view</p>
               </div>
             </div>
           </div>
