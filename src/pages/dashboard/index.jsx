@@ -340,12 +340,17 @@ const Dashboard = () => {
         
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">
-            Welcome back, {userProfile?.full_name || user?.email?.split('@')[0] || 'User'}!
-          </h1>
-          <p className="text-slate-600">
-            Here's your financial overview for {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 mb-2">
+                Welcome back, {userProfile?.full_name || user?.email?.split('@')[0] || 'User'}!
+              </h1>
+              <p className="text-slate-600">
+                Here's your financial overview for {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+              </p>
+            </div>
+            <QuickActions onAddDeposit={handleAddDeposit} />
+          </div>
         </div>
 
         {/* Month Navigator */}
@@ -388,9 +393,9 @@ const Dashboard = () => {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Column */}
-          <div className="space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Main Content - 3/4 width */}
+          <div className="lg:col-span-3 space-y-8">
             {/* Financial Items */}
             <div className="bg-white rounded-lg border border-slate-200 p-6">
               <div className="flex items-center justify-between mb-6">
@@ -407,16 +412,6 @@ const Dashboard = () => {
                     iconSize={16}
                   >
                     Add Deposit
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleViewAllBills}
-                    iconName="ArrowRight"
-                    iconPosition="right"
-                    iconSize={16}
-                  >
-                    View All
                   </Button>
                 </div>
               </div>
@@ -458,12 +453,8 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Right Column */}
-          <div className="space-y-8">
-            {/* Quick Actions */}
-            <QuickActions onAddDeposit={handleAddDeposit} />
-
-            {/* Alert Notifications */}
+          {/* Notifications - 1/4 width */}
+          <div className="lg:col-span-1">
             <AlertNotifications
               bills={bills}
               dismissedAlerts={dismissedAlerts}

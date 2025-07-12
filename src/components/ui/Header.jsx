@@ -13,7 +13,7 @@ const Header = () => {
   const userMenuRef = useRef(null);
 
   const navigationItems = [
-    { label: 'Dashboard', path: '/dashboard', icon: 'LayoutDashboard' }
+    // Removed Dashboard button as requested
   ];
 
   const handleNavigation = (path) => {
