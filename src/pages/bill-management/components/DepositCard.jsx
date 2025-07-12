@@ -4,6 +4,8 @@ import Button from '../../../components/ui/Button';
 import Icon from '../../../components/AppIcon';
 
 const DepositCard = ({ deposit, onDelete }) => {
+  console.log('🔍 Debug - DepositCard rendering with deposit:', deposit);
+  
   const formatDate = (dateString) => {
     try {
       return format(new Date(dateString), 'MMM dd, yyyy');

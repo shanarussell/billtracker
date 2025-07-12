@@ -570,6 +570,8 @@ const BillManagement = () => {
             {/* Cards View */}
             {currentView === 'cards' && (
               <div className="space-y-8">
+                {console.log('🔍 Debug - Rendering cards view, currentView:', currentView)}
+                {console.log('🔍 Debug - Current view state:', { currentView, depositsCount: deposits.length })}
                 {/* Deposits Section */}
                 {(() => {
                   // Temporarily show all deposits for debugging
@@ -578,21 +580,29 @@ const BillManagement = () => {
                   console.log('🔍 Debug - Deposits section - Total deposits:', deposits.length);
                   console.log('🔍 Debug - Deposits section - Filtered deposits:', filteredDeposits.length);
                   console.log('🔍 Debug - Deposits section - Should show section:', allDeposits.length > 0);
+                  console.log('🔍 Debug - Deposits section - All deposits:', allDeposits);
                   
-                  return allDeposits.length > 0 && (
-                    <div>
-                      <h2 className="text-lg font-semibold text-slate-900 mb-4">Deposits (All - Debug)</h2>
-                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {allDeposits.map(deposit => (
-                          <DepositCard
-                            key={deposit.id}
-                            deposit={deposit}
-                            onDelete={handleDeleteDeposit}
-                          />
-                        ))}
+                  // Show deposits section if there are any deposits (for now, show all)
+                  if (allDeposits.length > 0) {
+                    return (
+                      <div>
+                        <h2 className="text-lg font-semibold text-slate-900 mb-4">Deposits (All - Debug)</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                          {allDeposits.map(deposit => {
+                            console.log('🔍 Debug - Rendering deposit card:', deposit);
+                            return (
+                              <DepositCard
+                                key={deposit.id}
+                                deposit={deposit}
+                                onDelete={handleDeleteDeposit}
+                              />
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  );
+                    );
+                  }
+                  return null;
                 })()}
 
                 {/* Bills Section */}
