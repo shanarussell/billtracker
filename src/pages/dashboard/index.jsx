@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import billService from '../../utils/billService';
+import depositService from '../../utils/depositService';
 import Header from '../../components/ui/Header';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import MetricsCard from './components/MetricsCard';
@@ -9,6 +10,7 @@ import UpcomingBillCard from './components/UpcomingBillCard';
 import QuickActions from './components/QuickActions';
 import AlertNotifications from './components/AlertNotifications';
 import PaymentModal from '../../components/ui/PaymentModal';
+import DepositModal from '../../components/ui/DepositModal';
 import Button from '../../components/ui/Button';
 import Icon from '../../components/AppIcon';
 
@@ -16,10 +18,12 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user, userProfile, loading: authLoading } = useAuth();
   const [bills, setBills] = useState([]);
+  const [deposits, setDeposits] = useState([]);
   const [metrics, setMetrics] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [paymentModal, setPaymentModal] = useState({ isOpen: false, bill: null });
+  const [depositModal, setDepositModal] = useState({ isOpen: false });
 
   useEffect(() => {
     let isMounted = true;
@@ -31,8 +35,9 @@ const Dashboard = () => {
         setLoading(true);
         setError(null);
 
-        // Load bills and metrics
+        // Load bills, deposits, and metrics
         const billsResult = await billService.getBills(user.id);
+        const depositsResult = await depositService.getDeposits(user.id);
         const metricsResult = await billService.getFinancialMetrics(user.id);
 
         if (!isMounted) return;
@@ -41,6 +46,12 @@ const Dashboard = () => {
           setBills(billsResult.data);
         } else {
           setError(billsResult?.error || 'Failed to load bills');
+        }
+
+        if (depositsResult?.success) {
+          setDeposits(depositsResult.data);
+        } else {
+          setError(depositsResult?.error || 'Failed to load deposits');
         }
 
         if (metricsResult?.success) {
@@ -151,6 +162,31 @@ const Dashboard = () => {
 
   const handleViewBillFromAlert = (billId) => {
     navigate(`/bill-management?highlight=${billId}`);
+  };
+
+  const handleAddDeposit = () => {
+    setDepositModal({ isOpen: true });
+  };
+
+  const handleDepositConfirm = async (depositData) => {
+    try {
+      const result = await depositService.createDeposit(user.id, depositData);
+      
+      if (result?.success) {
+        setDeposits(prev => [result.data, ...prev]);
+        
+        // Reload metrics to update available funds
+        const metricsResult = await billService.getFinancialMetrics(user.id);
+        if (metricsResult?.success) {
+          setMetrics(metricsResult.data);
+        }
+      } else {
+        setError(result?.error || 'Failed to add deposit');
+      }
+    } catch (error) {
+      setError('Failed to add deposit');
+      console.log('Deposit error:', error);
+    }
   };
 
   // Get upcoming bills (next 5 bills)
@@ -296,7 +332,7 @@ const Dashboard = () => {
           {/* Right Column */}
           <div className="space-y-8">
             {/* Quick Actions */}
-            <QuickActions />
+            <QuickActions onAddDeposit={handleAddDeposit} />
 
             {/* Alert Notifications */}
             <AlertNotifications
@@ -342,6 +378,14 @@ const Dashboard = () => {
         onClose={() => setPaymentModal({ isOpen: false, bill: null })}
         onConfirm={handlePaymentConfirm}
         bill={paymentModal.bill}
+        currentUser={user}
+      />
+
+      {/* Deposit Modal */}
+      <DepositModal
+        isOpen={depositModal.isOpen}
+        onClose={() => setDepositModal({ isOpen: false })}
+        onConfirm={handleDepositConfirm}
         currentUser={user}
       />
     </div>

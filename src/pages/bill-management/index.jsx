@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import billService from '../../utils/billService';
+import depositService from '../../utils/depositService';
 import Header from '../../components/ui/Header';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import Button from '../../components/ui/Button';
@@ -11,6 +12,8 @@ import FilterBar from './components/FilterBar';
 import BulkActions from './components/BulkActions';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
 import PaymentModal from '../../components/ui/PaymentModal';
+import DepositModal from '../../components/ui/DepositModal';
+import DepositCard from './components/DepositCard';
 import ViewToggle from './components/ViewToggle';
 import Icon from '../../components/AppIcon';
 
@@ -21,6 +24,7 @@ const BillManagement = () => {
   
   // State management
   const [bills, setBills] = useState([]);
+  const [deposits, setDeposits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -30,6 +34,7 @@ const BillManagement = () => {
   const [currentView, setCurrentView] = useState('cards');
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, billId: null, billName: '', isMultiple: false });
   const [paymentModal, setPaymentModal] = useState({ isOpen: false, bill: null });
+  const [depositModal, setDepositModal] = useState({ isOpen: false });
 
   // Load bills
   useEffect(() => {
@@ -42,14 +47,21 @@ const BillManagement = () => {
         setLoading(true);
         setError(null);
 
-        const result = await billService.getBills(user.id);
+        const billsResult = await billService.getBills(user.id);
+        const depositsResult = await depositService.getDeposits(user.id);
 
         if (!isMounted) return;
 
-        if (result?.success) {
-          setBills(result.data || []);
+        if (billsResult?.success) {
+          setBills(billsResult.data || []);
         } else {
-          setError(result?.error || 'Failed to load bills');
+          setError(billsResult?.error || 'Failed to load bills');
+        }
+
+        if (depositsResult?.success) {
+          setDeposits(depositsResult.data || []);
+        } else {
+          setError(depositsResult?.error || 'Failed to load deposits');
         }
       } catch (error) {
         if (isMounted) {
@@ -269,6 +281,40 @@ const BillManagement = () => {
     setSortBy('dueDate');
   };
 
+  const handleAddDeposit = () => {
+    setDepositModal({ isOpen: true });
+  };
+
+  const handleDepositConfirm = async (depositData) => {
+    try {
+      const result = await depositService.createDeposit(user.id, depositData);
+      
+      if (result?.success) {
+        setDeposits(prev => [result.data, ...prev]);
+      } else {
+        setError(result?.error || 'Failed to add deposit');
+      }
+    } catch (error) {
+      setError('Failed to add deposit');
+      console.log('Deposit error:', error);
+    }
+  };
+
+  const handleDeleteDeposit = async (depositId) => {
+    try {
+      const result = await depositService.deleteDeposit(depositId);
+      
+      if (result?.success) {
+        setDeposits(prev => prev.filter(deposit => deposit.id !== depositId));
+      } else {
+        setError(result?.error || 'Failed to delete deposit');
+      }
+    } catch (error) {
+      setError('Failed to delete deposit');
+      console.log('Delete deposit error:', error);
+    }
+  };
+
   // Responsive view handling
   useEffect(() => {
     const handleResize = () => {
@@ -345,6 +391,16 @@ const BillManagement = () => {
             </div>
             
             <Button
+              variant="outline"
+              onClick={handleAddDeposit}
+              iconName="DollarSign"
+              iconPosition="left"
+              iconSize={18}
+            >
+              Add Deposit
+            </Button>
+            
+            <Button
               variant="default"
               onClick={() => navigate('/add-edit-bill')}
               iconName="Plus"
@@ -405,18 +461,40 @@ const BillManagement = () => {
           <>
             {/* Cards View */}
             {currentView === 'cards' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredAndSortedBills.map(bill => (
-                  <BillCard
-                    key={bill.id}
-                    bill={bill}
-                    onTogglePayment={handleTogglePayment}
-                    onEdit={handleEditBill}
-                    onDelete={handleDeleteBill}
-                    onSelect={handleSelectBill}
-                    isSelected={selectedBills.includes(bill.id)}
-                  />
-                ))}
+              <div className="space-y-8">
+                {/* Deposits Section */}
+                {deposits.length > 0 && (
+                  <div>
+                    <h2 className="text-lg font-semibold text-slate-900 mb-4">Deposits</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                      {deposits.map(deposit => (
+                        <DepositCard
+                          key={deposit.id}
+                          deposit={deposit}
+                          onDelete={handleDeleteDeposit}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Bills Section */}
+                <div>
+                  <h2 className="text-lg font-semibold text-slate-900 mb-4">Bills</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {filteredAndSortedBills.map(bill => (
+                      <BillCard
+                        key={bill.id}
+                        bill={bill}
+                        onTogglePayment={handleTogglePayment}
+                        onEdit={handleEditBill}
+                        onDelete={handleDeleteBill}
+                        onSelect={handleSelectBill}
+                        isSelected={selectedBills.includes(bill.id)}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
 
@@ -454,6 +532,14 @@ const BillManagement = () => {
         onClose={() => setPaymentModal({ isOpen: false, bill: null })}
         onConfirm={handlePaymentConfirm}
         bill={paymentModal.bill}
+        currentUser={user}
+      />
+
+      {/* Deposit Modal */}
+      <DepositModal
+        isOpen={depositModal.isOpen}
+        onClose={() => setDepositModal({ isOpen: false })}
+        onConfirm={handleDepositConfirm}
         currentUser={user}
       />
     </div>

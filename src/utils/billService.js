@@ -325,7 +325,15 @@ class BillService {
         .single();
 
       const monthlyIncome = parseFloat(profile?.monthly_income || 0);
-      const availableFunds = monthlyIncome - totalDue;
+
+      // Get total deposits
+      const { data: deposits } = await supabase
+        .from('deposits')
+        .select('amount')
+        .eq('user_id', userId);
+
+      const totalDeposits = deposits?.reduce((sum, deposit) => sum + parseFloat(deposit.amount), 0) || 0;
+      const availableFunds = monthlyIncome + totalDeposits - totalDue;
 
       return {
         success: true,
@@ -335,7 +343,8 @@ class BillService {
           remainingBalance,
           availableFunds,
           overdueBills,
-          monthlyIncome
+          monthlyIncome,
+          totalDeposits
         }
       };
     } catch (error) {
