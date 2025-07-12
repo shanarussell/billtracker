@@ -31,14 +31,18 @@ const PaymentModal = ({
     if (!currentUser?.id) return;
     
     try {
+      console.log('Loading payment methods for user:', currentUser.id);
       const result = await paymentMethodService.getPaymentMethods(currentUser.id);
       if (result.success) {
+        console.log('Payment methods loaded:', result.data);
         setPaymentMethods(result.data);
         // Set default payment method if available
         const defaultMethod = result.data.find(method => method.is_default);
         if (defaultMethod) {
           setSelectedPaymentMethod(defaultMethod.id);
         }
+      } else {
+        console.error('Failed to load payment methods:', result.error);
       }
     } catch (error) {
       console.error('Failed to load payment methods:', error);
@@ -62,10 +66,13 @@ const PaymentModal = ({
       });
 
       if (result.success) {
-        setPaymentMethods(prev => [...prev, result.data]);
+        console.log('Payment method added successfully:', result.data);
+        // Reload payment methods to ensure we have the latest data
+        await loadPaymentMethods();
+        // Set the newly added method as selected
         setSelectedPaymentMethod(result.data.id);
-            setNewMethodName('');
-    setShowAddMethod(false);
+        setNewMethodName('');
+        setShowAddMethod(false);
       } else {
         setError(result.error || 'Failed to add payment method');
       }
@@ -159,11 +166,14 @@ const PaymentModal = ({
                 onChange={(e) => setSelectedPaymentMethod(e.target.value)}
               >
                 <option value="">Select payment method</option>
-                {paymentMethods.map((method) => (
-                  <option key={method.id} value={method.id}>
-                    {method.name} {method.is_default ? '(Default)' : ''}
-                  </option>
-                ))}
+                {paymentMethods.map((method) => {
+                  console.log('Rendering payment method option:', method);
+                  return (
+                    <option key={method.id} value={method.id}>
+                      {method.name} {method.is_default ? '(Default)' : ''}
+                    </option>
+                  );
+                })}
               </Select>
             ) : (
               <p className="text-sm text-muted-foreground mb-2">No payment methods found</p>
