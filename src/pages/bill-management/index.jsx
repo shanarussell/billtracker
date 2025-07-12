@@ -83,9 +83,20 @@ const BillManagement = () => {
     };
   }, [user?.id, authLoading]);
 
+  // Helper function to check if a date is in the selected month
+  const isInSelectedMonth = (dateString) => {
+    const date = new Date(dateString);
+    return date.getMonth() === currentMonth.getMonth() && 
+           date.getFullYear() === currentMonth.getFullYear();
+  };
+
   // Filter and sort bills
   const filteredAndSortedBills = React.useMemo(() => {
-    let filtered = bills.filter(bill => {
+    // First filter by month
+    let monthFiltered = bills.filter(bill => isInSelectedMonth(bill.dueDate));
+    
+    // Then apply status filter
+    let filtered = monthFiltered.filter(bill => {
       // Status filter
       let matchesStatus = true;
       if (statusFilter === 'paid') {
@@ -115,20 +126,23 @@ const BillManagement = () => {
     return filtered;
   }, [bills, statusFilter, sortBy]);
 
-  // Combine bills and deposits for table view
+  // Combine bills and deposits for table view (filtered by month)
   const combinedTableItems = React.useMemo(() => {
-    const depositItems = deposits.map(deposit => ({
+    const filteredDeposits = deposits.filter(deposit => isInSelectedMonth(deposit.deposit_date));
+    const filteredBills = bills.filter(bill => isInSelectedMonth(bill.dueDate));
+    
+    const depositItems = filteredDeposits.map(deposit => ({
       ...deposit,
       type: 'deposit',
       displayDate: deposit.deposit_date,
     }));
-    const billItems = bills.map(bill => ({
+    const billItems = filteredBills.map(bill => ({
       ...bill,
       type: 'bill',
       displayDate: bill.dueDate,
     }));
     return [...depositItems, ...billItems].sort((a, b) => new Date(a.displayDate) - new Date(b.displayDate));
-  }, [bills, deposits]);
+  }, [bills, deposits, currentMonth]);
 
   // Handle bill actions
   const handleTogglePayment = async (billId) => {
@@ -479,11 +493,11 @@ const BillManagement = () => {
             {currentView === 'cards' && (
               <div className="space-y-8">
                 {/* Deposits Section */}
-                {deposits.length > 0 && (
+                {deposits.filter(deposit => isInSelectedMonth(deposit.deposit_date)).length > 0 && (
                   <div>
                     <h2 className="text-lg font-semibold text-slate-900 mb-4">Deposits</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                      {deposits.map(deposit => (
+                      {deposits.filter(deposit => isInSelectedMonth(deposit.deposit_date)).map(deposit => (
                         <DepositCard
                           key={deposit.id}
                           deposit={deposit}

@@ -218,27 +218,38 @@ const Dashboard = () => {
     }
   };
 
-  // Get overdue bills (bills that are overdue)
-  const overdueBills = bills
+  // Helper function to check if a date is in the selected month
+  const isInSelectedMonth = (dateString) => {
+    const date = new Date(dateString);
+    return date.getMonth() === currentMonth.getMonth() && 
+           date.getFullYear() === currentMonth.getFullYear();
+  };
+
+  // Filter bills and deposits for the selected month
+  const filteredBills = bills?.filter(bill => isInSelectedMonth(bill.dueDate)) || [];
+  const filteredDeposits = deposits?.filter(deposit => isInSelectedMonth(deposit.deposit_date)) || [];
+
+  // Get overdue bills (bills that are overdue) for selected month
+  const overdueBills = filteredBills
     ?.filter(bill => bill.isOverdue)
     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate)) || [];
 
-  // Get upcoming bills (bills that are not overdue, next 5)
-  const upcomingBills = bills
+  // Get upcoming bills (bills that are not overdue, next 5) for selected month
+  const upcomingBills = filteredBills
     ?.filter(bill => !bill.isOverdue)
     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
     .slice(0, 5) || [];
 
-  // Combine deposits and bills into a single list sorted by date
+  // Combine deposits and bills into a single list sorted by date for selected month
   const allFinancialItems = [
-    ...deposits.map(deposit => ({
+    ...filteredDeposits.map(deposit => ({
       ...deposit,
       type: 'deposit',
       displayDate: deposit.deposit_date,
       amount: parseFloat(deposit.amount),
       isPositive: true
     })),
-    ...bills.map(bill => ({
+    ...filteredBills.map(bill => ({
       ...bill,
       type: 'bill',
       displayDate: bill.dueDate,
@@ -313,7 +324,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <MetricsCard
             title="Total Deposits"
-            amount={`$${(metrics?.totalDeposits || 0).toFixed(2)}`}
+            amount={`$${filteredDeposits.reduce((sum, deposit) => sum + parseFloat(deposit.amount), 0).toFixed(2)}`}
             icon="DollarSign"
             variant="success"
             trend="up"
@@ -321,13 +332,13 @@ const Dashboard = () => {
           />
           <MetricsCard
             title="Total Bills Due"
-            amount={`$${(metrics?.totalDue || 0).toFixed(2)}`}
+            amount={`$${filteredBills.reduce((sum, bill) => sum + parseFloat(bill.amount), 0).toFixed(2)}`}
             icon="Receipt"
             variant="default"
           />
           <MetricsCard
             title="Total Paid"
-            amount={`$${(metrics?.totalPaid || 0).toFixed(2)}`}
+            amount={`$${filteredBills.filter(bill => bill.isPaid).reduce((sum, bill) => sum + parseFloat(bill.amount), 0).toFixed(2)}`}
             icon="CheckCircle"
             variant="success"
             trend="up"
@@ -335,9 +346,9 @@ const Dashboard = () => {
           />
           <MetricsCard
             title="Remaining Balance"
-            amount={`$${(metrics?.remainingBalance || 0).toFixed(2)}`}
+            amount={`$${filteredBills.filter(bill => !bill.isPaid).reduce((sum, bill) => sum + parseFloat(bill.amount), 0).toFixed(2)}`}
             icon="AlertCircle"
-            variant={(metrics?.remainingBalance || 0) > 0 ? "warning" : "success"}
+            variant={filteredBills.filter(bill => !bill.isPaid).reduce((sum, bill) => sum + parseFloat(bill.amount), 0) > 0 ? "warning" : "success"}
           />
         </div>
 
@@ -431,30 +442,29 @@ const Dashboard = () => {
           <h3 className="text-lg font-semibold text-slate-900 mb-4">Monthly Summary</h3>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div className="text-center">
-              <p className="text-2xl font-bold text-slate-900">{bills?.length || 0}</p>
+              <p className="text-2xl font-bold text-slate-900">{filteredBills?.length || 0}</p>
               <p className="text-sm text-slate-600">Total Bills</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-green-600">
-                {bills?.filter(bill => bill.isPaid).length || 0}
+                {filteredBills?.filter(bill => bill.isPaid).length || 0}
               </p>
               <p className="text-sm text-slate-600">Paid</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-amber-600">
-                {bills?.filter(bill => !bill.isPaid && !bill.isOverdue).length || 0}
+                {filteredBills?.filter(bill => !bill.isPaid && !bill.isOverdue).length || 0}
               </p>
               <p className="text-sm text-slate-600">Pending</p>
             </div>
             <div className="text-center">
               <p className="text-2xl font-bold text-red-600">
-                {bills?.filter(bill => bill.isOverdue).length || 0}
-                {/* Debug: {bills?.length || 0} total bills, {bills?.filter(bill => bill.isPaid).length || 0} paid */}
+                {filteredBills?.filter(bill => bill.isOverdue).length || 0}
               </p>
               <p className="text-sm text-slate-600">Overdue</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-green-600">{deposits?.length || 0}</p>
+              <p className="text-2xl font-bold text-green-600">{filteredDeposits?.length || 0}</p>
               <p className="text-sm text-slate-600">Deposits</p>
             </div>
           </div>
