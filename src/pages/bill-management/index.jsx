@@ -119,6 +119,21 @@ const BillManagement = () => {
     return filtered;
   }, [bills, searchTerm, statusFilter, sortBy]);
 
+  // Combine bills and deposits for table view
+  const combinedTableItems = React.useMemo(() => {
+    const depositItems = deposits.map(deposit => ({
+      ...deposit,
+      type: 'deposit',
+      displayDate: deposit.deposit_date,
+    }));
+    const billItems = bills.map(bill => ({
+      ...bill,
+      type: 'bill',
+      displayDate: bill.dueDate,
+    }));
+    return [...depositItems, ...billItems].sort((a, b) => new Date(a.displayDate) - new Date(b.displayDate));
+  }, [bills, deposits]);
+
   // Handle bill actions
   const handleTogglePayment = async (billId) => {
     const bill = bills.find(b => b.id === billId);
@@ -502,13 +517,14 @@ const BillManagement = () => {
             {currentView === 'table' && (
               <div className="bg-card border rounded-lg overflow-hidden">
                 <BillTable
-                  bills={filteredAndSortedBills}
+                  bills={combinedTableItems}
                   onTogglePayment={handleTogglePayment}
                   onEdit={handleEditBill}
                   onDelete={handleDeleteBill}
                   onSelect={handleSelectBill}
                   selectedBills={selectedBills}
                   onSelectAll={handleSelectAll}
+                  onDeleteDeposit={handleDeleteDeposit}
                 />
               </div>
             )}

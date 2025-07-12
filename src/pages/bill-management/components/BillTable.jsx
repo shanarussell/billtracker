@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '../../../components/ui/Button';
 import { formatDate } from '../../../utils/cn';
 
-const BillTable = ({ bills, onTogglePayment, onEdit, onDelete, onSelect, selectedBills, onSelectAll }) => {
+const BillTable = ({ bills, onTogglePayment, onEdit, onDelete, onSelect, selectedBills, onSelectAll, onDeleteDeposit }) => {
   const getStatusBadge = (status, dueDate) => {
     if (status === 'paid') {
       return <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Paid</span>;
@@ -54,56 +54,88 @@ const BillTable = ({ bills, onTogglePayment, onEdit, onDelete, onSelect, selecte
           </tr>
         </thead>
         <tbody>
-          {bills.map((bill) => (
-            <tr key={bill.id} className="border-b hover:bg-muted/30 transition-colors duration-200">
-              <td className="p-4">
-                <input
-                  type="checkbox"
-                  checked={selectedBills.includes(bill.id)}
-                  onChange={() => onSelect(bill.id)}
-                  className="rounded border-border focus:ring-2 focus:ring-primary"
-                />
-              </td>
-              <td className="p-4">
-                <div>
-                  <p className="font-semibold text-foreground">{bill.name}</p>
-                  <p className="text-sm text-muted-foreground">{bill.category}</p>
-                </div>
-              </td>
-              <td className="p-4 font-semibold text-foreground">{formatAmount(bill.amount)}</td>
-              <td className="p-4 text-foreground">{formatDate(bill.dueDate)}</td>
-              <td className="p-4">{getStatusBadge(bill.status, bill.dueDate)}</td>
-              <td className="p-4">
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant={bill.status === 'paid' ? 'success' : 'outline'}
-                    size="sm"
-                    onClick={() => onTogglePayment(bill.id)}
-                    iconName={bill.status === 'paid' ? 'CheckCircle' : 'Circle'}
-                    iconPosition="left"
-                    iconSize={16}
-                  >
-                    {bill.status === 'paid' ? 'Paid' : 'Pay'}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onEdit(bill)}
-                    iconName="Edit"
-                    iconSize={16}
+          {bills.map((item) => {
+            if (item.type === 'deposit') {
+              return (
+                <tr key={`deposit-${item.id}`} className="border-b bg-green-50 hover:bg-green-100 transition-colors duration-200">
+                  <td className="p-4">
+                    {/* No selection for deposits */}
+                  </td>
+                  <td className="p-4">
+                    <div>
+                      <p className="font-semibold text-green-700">Deposit</p>
+                      <p className="text-sm text-muted-foreground">{item.source}</p>
+                    </div>
+                  </td>
+                  <td className="p-4 font-semibold text-green-700">+{formatAmount(item.amount)}</td>
+                  <td className="p-4 text-green-700">{formatDate(item.deposit_date)}</td>
+                  <td className="p-4">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Deposit</span>
+                  </td>
+                  <td className="p-4">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onDeleteDeposit(item.id)}
+                      iconName="Trash2"
+                      iconSize={16}
+                      className="text-destructive hover:text-destructive"
+                    />
+                  </td>
+                </tr>
+              );
+            }
+            return (
+              <tr key={item.id} className="border-b hover:bg-muted/30 transition-colors duration-200">
+                <td className="p-4">
+                  <input
+                    type="checkbox"
+                    checked={selectedBills.includes(item.id)}
+                    onChange={() => onSelect(item.id)}
+                    className="rounded border-border focus:ring-2 focus:ring-primary"
                   />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => onDelete(bill.id)}
-                    iconName="Trash2"
-                    iconSize={16}
-                    className="text-destructive hover:text-destructive"
-                  />
-                </div>
-              </td>
-            </tr>
-          ))}
+                </td>
+                <td className="p-4">
+                  <div>
+                    <p className="font-semibold text-foreground">{item.name}</p>
+                    <p className="text-sm text-muted-foreground">{item.category}</p>
+                  </div>
+                </td>
+                <td className="p-4 font-semibold text-foreground">{formatAmount(item.amount)}</td>
+                <td className="p-4 text-foreground">{formatDate(item.dueDate)}</td>
+                <td className="p-4">{getStatusBadge(item.status, item.dueDate)}</td>
+                <td className="p-4">
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant={item.status === 'paid' ? 'success' : 'outline'}
+                      size="sm"
+                      onClick={() => onTogglePayment(item.id)}
+                      iconName={item.status === 'paid' ? 'CheckCircle' : 'Circle'}
+                      iconPosition="left"
+                      iconSize={16}
+                    >
+                      {item.status === 'paid' ? 'Paid' : 'Pay'}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onEdit(item)}
+                      iconName="Edit"
+                      iconSize={16}
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onDelete(item.id)}
+                      iconName="Trash2"
+                      iconSize={16}
+                      className="text-destructive hover:text-destructive"
+                    />
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
