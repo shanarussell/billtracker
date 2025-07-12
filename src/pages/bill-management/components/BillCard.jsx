@@ -68,10 +68,7 @@ const BillCard = ({ bill, onTogglePayment, onEdit, onDelete, onSelect, isSelecte
         </div>
       </div>
 
-      <div className="mb-4">
-        <p className="text-sm text-muted-foreground">Payment Method</p>
-        <p className="font-medium text-foreground">{bill.paymentMethod}</p>
-      </div>
+
 
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">

@@ -48,7 +48,7 @@ const BillTable = ({ bills, onTogglePayment, onEdit, onDelete, onSelect, selecte
             <th className="text-left p-4 font-semibold text-foreground">Bill Name</th>
             <th className="text-left p-4 font-semibold text-foreground">Amount</th>
             <th className="text-left p-4 font-semibold text-foreground">Due Date</th>
-            <th className="text-left p-4 font-semibold text-foreground">Payment Method</th>
+
             <th className="text-left p-4 font-semibold text-foreground">Status</th>
             <th className="text-left p-4 font-semibold text-foreground">Actions</th>
           </tr>
@@ -72,7 +72,6 @@ const BillTable = ({ bills, onTogglePayment, onEdit, onDelete, onSelect, selecte
               </td>
               <td className="p-4 font-semibold text-foreground">{formatAmount(bill.amount)}</td>
               <td className="p-4 text-foreground">{formatDate(bill.dueDate)}</td>
-              <td className="p-4 text-foreground">{bill.paymentMethod}</td>
               <td className="p-4">{getStatusBadge(bill.status, bill.dueDate)}</td>
               <td className="p-4">
                 <div className="flex items-center space-x-2">
