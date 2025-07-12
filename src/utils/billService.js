@@ -28,7 +28,7 @@ class BillService {
         const dueDate = new Date(bill.due_date);
         dueDate.setHours(0, 0, 0, 0); // Reset time to start of day
         
-        const isOverdue = !bill.status === 'paid' && dueDate < today;
+        const isOverdue = bill.status !== 'paid' && dueDate < today;
         
         return {
           id: bill.id,
