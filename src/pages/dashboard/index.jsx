@@ -263,15 +263,14 @@ const Dashboard = () => {
       return new Date(ay, am - 1, ad) - new Date(by, bm - 1, bd);
     }) || [];
 
-  // Get upcoming bills (bills that are not overdue, next 5) for selected month
+  // Get upcoming bills (bills that are not overdue) for selected month
   const upcomingBills = filteredBills
     ?.filter(bill => !calculateIsOverdue(bill))
     .sort((a, b) => {
       const [ay, am, ad] = a.dueDate.split('-').map(Number);
       const [by, bm, bd] = b.dueDate.split('-').map(Number);
       return new Date(ay, am - 1, ad) - new Date(by, bm - 1, bd);
-    })
-    .slice(0, 5) || [];
+    }) || [];
 
   // Combine deposits and bills into a single list sorted by date for selected month
   const allFinancialItems = [
@@ -293,7 +292,7 @@ const Dashboard = () => {
     const [ay, am, ad] = a.displayDate.split('-').map(Number);
     const [by, bm, bd] = b.displayDate.split('-').map(Number);
     return new Date(ay, am - 1, ad) - new Date(by, bm - 1, bd);
-  }).slice(0, 8);
+  });
 
   // Show loading state
   if (authLoading || loading) {
