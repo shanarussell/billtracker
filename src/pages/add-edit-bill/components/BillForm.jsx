@@ -28,6 +28,7 @@ const BillForm = () => {
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingBill, setLoadingBill] = useState(false);
 
 
 
@@ -46,13 +47,40 @@ const BillForm = () => {
     { value: '7', label: '7 days before' }
   ];
 
+  // Load bill data for editing
   useEffect(() => {
-    if (isEditMode && billId) {
-      const existingBill = mockBills.find(bill => bill.id === billId);
-      if (existingBill) {
-        setFormData(existingBill);
+    const loadBillData = async () => {
+      if (!isEditMode || !billId) return;
+      
+      try {
+        setLoadingBill(true);
+        const result = await billService.getBillById(billId);
+        
+        if (result?.success && result.data) {
+          const bill = result.data;
+          setFormData({
+            name: bill.name || '',
+            amount: bill.amount?.toString() || '',
+            dueDate: bill.dueDate || '',
+            isRecurring: bill.isRecurring || false,
+            frequency: 'monthly', // Default since we don't store this
+            endDate: '', // Default since we don't store this
+            notes: bill.notes || '',
+            reminderDays: '3' // Default since we don't store this
+          });
+        } else {
+          console.error('Failed to load bill:', result?.error);
+          setErrors({ submit: 'Failed to load bill data. Please try again.' });
+        }
+      } catch (error) {
+        console.error('Error loading bill:', error);
+        setErrors({ submit: 'Failed to load bill data. Please try again.' });
+      } finally {
+        setLoadingBill(false);
       }
-    }
+    };
+
+    loadBillData();
   }, [billId, isEditMode]);
 
   const handleInputChange = (field, value) => {
@@ -172,6 +200,20 @@ const BillForm = () => {
     
     return dates;
   };
+
+  // Show loading state when loading bill data
+  if (isEditMode && loadingBill) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <Icon name="Loader2" size={32} className="animate-spin mx-auto mb-4 text-primary" />
+            <p className="text-slate-600">Loading bill data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto">
