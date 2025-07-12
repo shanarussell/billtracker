@@ -147,32 +147,7 @@ const HowItWorksSection = () => {
           ))}
         </div>
 
-        {/* Bottom CTA */}
-        <div className="text-center mt-16 lg:mt-24">
-          <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-2xl p-8 lg:p-12">
-            <h3 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
-              Ready to Start Tracking?
-            </h3>
-            <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Join users who have simplified their financial tracking with Easy Bill Tracker.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <div className="flex items-center text-sm text-muted-foreground">
-                <Icon name="Clock" size={16} className="mr-2 text-primary" />
-                <span>Setup takes less than 5 minutes</span>
-              </div>
-              <div className="flex items-center text-sm text-muted-foreground">
-                <Icon name="CreditCard" size={16} className="mr-2 text-success" />
-                <span>No credit card required</span>
-              </div>
-              <div className="flex items-center text-sm text-muted-foreground">
-                <Icon name="Shield" size={16} className="mr-2 text-accent" />
-                <span>100% secure & private</span>
-              </div>
-            </div>
-          </div>
-        </div>
+
       </div>
     </section>
   );

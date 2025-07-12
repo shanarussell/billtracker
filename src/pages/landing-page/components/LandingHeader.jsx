@@ -27,8 +27,7 @@ const LandingHeader = () => {
 
   const navigationItems = [
     { label: 'Features', action: () => scrollToSection('features') },
-    { label: 'How It Works', action: () => scrollToSection('how-it-works') },
-    { label: 'Testimonials', action: () => scrollToSection('testimonials') }
+    { label: 'How It Works', action: () => scrollToSection('how-it-works') }
   ];
 
   return (

@@ -3,7 +3,7 @@ import LandingHeader from './components/LandingHeader';
 import HeroSection from './components/HeroSection';
 import FeaturesSection from './components/FeaturesSection';
 import HowItWorksSection from './components/HowItWorksSection';
-import LandingFooter from './components/LandingFooter';
+import ReadyToStartSection from './components/ReadyToStartSection';
 
 const LandingPage = () => {
   return (
@@ -14,9 +14,8 @@ const LandingPage = () => {
         <HeroSection />
         <FeaturesSection />
         <HowItWorksSection />
+        <ReadyToStartSection />
       </main>
-      
-      <LandingFooter />
     </div>
   );
 };
