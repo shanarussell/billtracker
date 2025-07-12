@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import LoginHeader from './components/LoginHeader';
 import LoginForm from './components/LoginForm';
 import TrustSignals from './components/TrustSignals';
-import DemoCredentials from './components/DemoCredentials';
 
 const LoginScreen = () => {
   const navigate = useNavigate();
@@ -29,7 +28,6 @@ const LoginScreen = () => {
             <LoginHeader />
             <LoginForm />
             <TrustSignals />
-            <DemoCredentials />
           </div>
 
           {/* Footer Link */}

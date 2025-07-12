@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../../../contexts/AuthContext';
+import billService from '../../../utils/billService';
+import paymentMethodService from '../../../utils/paymentMethodService';
 import Input from '../../../components/ui/Input';
 import Select from '../../../components/ui/Select';
 import Button from '../../../components/ui/Button';
@@ -9,6 +12,7 @@ import Icon from '../../../components/AppIcon';
 const BillForm = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { user } = useAuth();
   const billId = searchParams.get('id');
   const isEditMode = Boolean(billId);
 
@@ -27,46 +31,35 @@ const BillForm = () => {
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [loadingPaymentMethods, setLoadingPaymentMethods] = useState(false);
 
-  // Mock existing bills data for edit mode
-  const mockBills = [
-    {
-      id: '1',
-      name: 'Electric Bill',
-      amount: '125.50',
-      dueDate: '2025-01-15',
-      paymentMethod: 'chase',
-      isRecurring: true,
-      frequency: 'monthly',
-      endDate: '',
-      notes: 'Usually higher in summer months',
-      category: 'utilities',
-      reminderDays: '3'
-    },
-    {
-      id: '2',
-      name: 'Car Loan',
-      amount: '485.00',
-      dueDate: '2025-01-20',
-      paymentMethod: 'afcu',
-      isRecurring: true,
-      frequency: 'monthly',
-      endDate: '2027-12-20',
-      notes: '36-month loan ending December 2027',
-      category: 'loans',
-      reminderDays: '5'
-    }
-  ];
+  // Load payment methods from database
+  useEffect(() => {
+    const loadPaymentMethods = async () => {
+      if (!user?.id) return;
+      
+      try {
+        setLoadingPaymentMethods(true);
+        const result = await paymentMethodService.getPaymentMethods(user.id);
+        
+        if (result?.success) {
+          setPaymentMethods(result.data);
+        }
+      } catch (error) {
+        console.error('Failed to load payment methods:', error);
+      } finally {
+        setLoadingPaymentMethods(false);
+      }
+    };
 
-  const paymentMethodOptions = [
-    { value: 'afcu', label: 'AFCU' },
-    { value: 'discover', label: 'Discover' },
-    { value: 'apple-card', label: 'Apple Card' },
-    { value: 'chase', label: 'Chase Card' },
-    { value: 'care-credit', label: 'Care Credit' },
-    { value: 'heb-card', label: 'HEB Card' },
-    { value: 'citi-card', label: 'Citi Card' }
-  ];
+    loadPaymentMethods();
+  }, [user?.id]);
+
+  const paymentMethodOptions = paymentMethods.map(method => ({
+    value: method.id,
+    label: method.name
+  }));
 
   const frequencyOptions = [
     { value: 'monthly', label: 'Monthly' },
@@ -144,26 +137,41 @@ const BillForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    if (!validateForm() || !user?.id) {
       return;
     }
 
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const billData = {
+        name: formData.name,
+        category: formData.category,
+        amount: parseFloat(formData.amount),
+        dueDate: formData.dueDate,
+        paymentMethodId: formData.paymentMethod,
+        status: 'unpaid',
+        isRecurring: formData.isRecurring,
+        notes: formData.notes || ''
+      };
+
+      let result;
+      if (isEditMode) {
+        result = await billService.updateBill(billId, billData);
+      } else {
+        result = await billService.createBill(user.id, billData);
+      }
       
-      // Mock save logic
-      console.log('Saving bill:', formData);
-      
-      // Navigate back to bill management with success message
-      navigate('/bill-management', { 
-        state: { 
-          message: isEditMode ? 'Bill updated successfully!' : 'Bill added successfully!',
-          type: 'success'
-        }
-      });
+      if (result?.success) {
+        navigate('/bill-management', { 
+          state: { 
+            message: isEditMode ? 'Bill updated successfully!' : 'Bill added successfully!',
+            type: 'success'
+          }
+        });
+      } else {
+        setErrors({ submit: result?.error || 'Failed to save bill. Please try again.' });
+      }
     } catch (error) {
       console.error('Error saving bill:', error);
       setErrors({ submit: 'Failed to save bill. Please try again.' });

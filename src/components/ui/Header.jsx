@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import Icon from '../AppIcon';
 import Button from './Button';
 
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, signOut } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
@@ -21,10 +23,18 @@ const Header = () => {
     setIsMobileMenuOpen(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    navigate('/login-screen');
-    setIsUserMenuOpen(false);
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/login-screen');
+      setIsUserMenuOpen(false);
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Fallback to localStorage logout
+      localStorage.removeItem('authToken');
+      navigate('/login-screen');
+      setIsUserMenuOpen(false);
+    }
   };
 
   const toggleUserMenu = () => {
