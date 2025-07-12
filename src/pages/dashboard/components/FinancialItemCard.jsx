@@ -123,7 +123,7 @@ const FinancialItemCard = ({ item, onTogglePayment, onEdit, onDelete }) => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onEdit(item.id)}
+            onClick={() => onEdit && onEdit(item.id, item)}
             className="text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg p-2"
           >
             <Icon name="Edit" size={16} />

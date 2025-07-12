@@ -14,6 +14,7 @@ import FinancialItemCard from './components/FinancialItemCard';
 import AlertNotifications from './components/AlertNotifications';
 import PaymentModal from '../../components/ui/PaymentModal';
 import DepositModal from '../../components/ui/DepositModal';
+import DepositEditModal from '../../components/ui/DepositEditModal';
 import DeleteConfirmModal from '../../components/ui/DeleteConfirmModal';
 import Icon from '../../components/AppIcon';
 
@@ -27,6 +28,7 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [paymentModal, setPaymentModal] = useState({ isOpen: false, bill: null });
   const [depositModal, setDepositModal] = useState({ isOpen: false });
+  const [depositEditModal, setDepositEditModal] = useState({ isOpen: false, deposit: null });
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, bill: null });
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -163,6 +165,10 @@ const Dashboard = () => {
 
   const handleEditBill = (billId) => {
     navigate(`/add-edit-bill?id=${billId}`);
+  };
+
+  const handleEditDeposit = (depositId, deposit) => {
+    setDepositEditModal({ isOpen: true, deposit });
   };
 
   const handleViewAllBills = () => {
@@ -522,7 +528,7 @@ const Dashboard = () => {
                       key={`${item.type}-${item.id}`}
                       item={item}
                       onTogglePayment={handleTogglePayment}
-                      onEdit={handleEditBill}
+                      onEdit={item.type === 'deposit' ? handleEditDeposit : handleEditBill}
                       onDelete={item.type === 'deposit' ? handleDeleteDeposit : handleDeleteBill}
                     />
                   ))}
@@ -611,6 +617,32 @@ const Dashboard = () => {
         isOpen={depositModal.isOpen}
         onClose={() => setDepositModal({ isOpen: false })}
         onConfirm={handleDepositConfirm}
+        currentUser={user}
+      />
+
+      {/* Deposit Edit Modal */}
+      <DepositEditModal
+        isOpen={depositEditModal.isOpen}
+        onClose={() => setDepositEditModal({ isOpen: false, deposit: null })}
+        onConfirm={async (updatedDepositData) => {
+          try {
+            const result = await depositService.updateDeposit(depositEditModal.deposit.id, updatedDepositData);
+            if (result?.success) {
+              setDeposits(prev => prev.map(d => d.id === depositEditModal.deposit.id ? result.data : d));
+              // Reload metrics to update available funds
+              const metricsResult = await billService.getFinancialMetrics(user.id);
+              if (metricsResult?.success) {
+                setMetrics(metricsResult.data);
+              }
+            } else {
+              setError(result?.error || 'Failed to update deposit');
+            }
+          } catch (error) {
+            setError('Failed to update deposit');
+            console.log('Deposit update error:', error);
+          }
+        }}
+        deposit={depositEditModal.deposit}
         currentUser={user}
       />
 
