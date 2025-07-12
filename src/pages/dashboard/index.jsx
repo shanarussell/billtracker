@@ -511,6 +511,16 @@ const Dashboard = () => {
                   <Button
                     variant="outline"
                     size="sm"
+                    onClick={() => navigate('/add-edit-bill')}
+                    iconName="Plus"
+                    iconPosition="left"
+                    iconSize={16}
+                  >
+                    Add Bill
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={handleAddDeposit}
                     iconName="Plus"
                     iconPosition="left"
