@@ -14,8 +14,7 @@ const Header = () => {
 
   const navigationItems = [
     { label: 'Dashboard', path: '/dashboard', icon: 'LayoutDashboard' },
-    { label: 'Bills', path: '/bill-management', icon: 'Receipt' },
-    { label: 'Summary', path: '/financial-summary', icon: 'BarChart3' }
+    { label: 'Bills', path: '/bill-management', icon: 'Receipt' }
   ];
 
   const handleNavigation = (path) => {
