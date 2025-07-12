@@ -33,17 +33,17 @@ const AppBranding = () => {
 
       {/* Quick Benefits */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <div className="flex items-center justify-center space-x-2 p-3 bg-muted/30 rounded-lg">
-          <Icon name="Calendar" size={16} className="text-primary" />
-          <span className="text-sm font-medium text-foreground">Track Due Dates</span>
+        <div className="flex items-center justify-center space-x-2 p-4 bg-primary text-white rounded-xl shadow-sm">
+          <Icon name="Calendar" size={16} className="text-white" />
+          <span className="text-sm font-medium text-white">Track Due Dates</span>
         </div>
-        <div className="flex items-center justify-center space-x-2 p-3 bg-muted/30 rounded-lg">
-          <Icon name="DollarSign" size={16} className="text-primary" />
-          <span className="text-sm font-medium text-foreground">Monitor Spending</span>
+        <div className="flex items-center justify-center space-x-2 p-4 bg-primary text-white rounded-xl shadow-sm">
+          <Icon name="DollarSign" size={16} className="text-white" />
+          <span className="text-sm font-medium text-white">Monitor Spending</span>
         </div>
-        <div className="flex items-center justify-center space-x-2 p-3 bg-muted/30 rounded-lg">
-          <Icon name="Bell" size={16} className="text-primary" />
-          <span className="text-sm font-medium text-foreground">Get Reminders</span>
+        <div className="flex items-center justify-center space-x-2 p-4 bg-primary text-white rounded-xl shadow-sm">
+          <Icon name="Bell" size={16} className="text-white" />
+          <span className="text-sm font-medium text-white">Get Reminders</span>
         </div>
       </div>
 

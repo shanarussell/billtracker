@@ -9,6 +9,8 @@ import RegistrationScreen from "pages/registration-screen";
 import Dashboard from "pages/dashboard";
 import LandingPage from "pages/landing-page";
 import FinancialSummary from "pages/financial-summary";
+import TermsOfService from "pages/terms-of-service";
+import PrivacyPolicy from "pages/privacy-policy";
 import NotFound from "pages/NotFound";
 
 const Routes = () => {
@@ -25,6 +27,8 @@ const Routes = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/landing-page" element={<LandingPage />} />
         <Route path="/financial-summary" element={<FinancialSummary />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="*" element={<NotFound />} />
       </RouterRoutes>
       </ErrorBoundary>

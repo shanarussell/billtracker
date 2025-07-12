@@ -297,11 +297,19 @@ const RegistrationForm = () => {
           />
           <div className="text-xs text-muted-foreground">
             By creating an account, you agree to our{' '}
-            <button type="button" className="text-primary hover:underline">
+            <button 
+              type="button" 
+              className="text-primary hover:underline"
+              onClick={() => navigate('/terms-of-service')}
+            >
               Terms of Service
             </button>{' '}
             and{' '}
-            <button type="button" className="text-primary hover:underline">
+            <button 
+              type="button" 
+              className="text-primary hover:underline"
+              onClick={() => navigate('/privacy-policy')}
+            >
               Privacy Policy
             </button>
           </div>
