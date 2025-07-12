@@ -7,7 +7,6 @@ import Breadcrumb from '../../components/ui/Breadcrumb';
 import MetricsCard from './components/MetricsCard';
 import UpcomingBillCard from './components/UpcomingBillCard';
 import QuickActions from './components/QuickActions';
-import SpendingChart from './components/SpendingChart';
 import AlertNotifications from './components/AlertNotifications';
 import PaymentModal from '../../components/ui/PaymentModal';
 import Button from '../../components/ui/Button';
@@ -243,9 +242,9 @@ const Dashboard = () => {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="space-y-8">
             {/* Upcoming Bills */}
             <div className="bg-white rounded-lg border border-slate-200 p-6">
               <div className="flex items-center justify-between mb-6">
@@ -290,9 +289,6 @@ const Dashboard = () => {
                 </div>
               )}
             </div>
-
-            {/* Spending Chart */}
-            <SpendingChart chartType="bar" bills={bills} />
           </div>
 
           {/* Right Column */}
@@ -306,9 +302,6 @@ const Dashboard = () => {
               onDismiss={handleDismissAlert}
               onViewBill={handleViewBillFromAlert}
             />
-
-            {/* Category Breakdown */}
-            <SpendingChart chartType="pie" title="This Month's Categories" bills={bills} />
           </div>
         </div>
 
