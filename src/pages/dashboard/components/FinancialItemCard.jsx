@@ -43,17 +43,17 @@ const FinancialItemCard = ({ item, onTogglePayment, onEdit, onDelete }) => {
               variant="ghost"
               size="sm"
               onClick={() => onEdit && onEdit(item.id, item)}
-              className="text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg p-1.5"
+              className="text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg p-2"
             >
-              <Icon name="Edit" size={14} />
+              <Icon name="Edit" size={18} />
             </Button>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onDelete(item.id)}
-              className="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg p-1.5"
+              className="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg p-2"
             >
-              <Icon name="Trash2" size={14} />
+              <Icon name="Trash2" size={18} />
             </Button>
           </div>
         </div>
@@ -138,29 +138,29 @@ const FinancialItemCard = ({ item, onTogglePayment, onEdit, onDelete }) => {
             variant="ghost"
             size="sm"
             onClick={() => onEdit && onEdit(item.id, item)}
-            className="text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg p-1.5"
+            className="text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg p-2"
           >
-            <Icon name="Edit" size={14} />
+            <Icon name="Edit" size={18} />
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onTogglePayment(item.id)}
-            className={`rounded-lg p-1.5 ${
+            className={`rounded-lg p-2 ${
               item.isPaid 
                 ? 'text-green-500 hover:text-green-600 hover:bg-green-50' 
                 : 'text-amber-500 hover:text-amber-600 hover:bg-amber-50'
             }`}
           >
-            <Icon name={item.isPaid ? "CheckCircle" : "CreditCard"} size={14} />
+            <Icon name={item.isPaid ? "CheckCircle" : "CreditCard"} size={18} />
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onDelete && onDelete(item.id, item)}
-            className="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg p-1.5"
+            className="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg p-2"
           >
-            <Icon name="Trash2" size={14} />
+            <Icon name="Trash2" size={18} />
           </Button>
         </div>
       </div>
