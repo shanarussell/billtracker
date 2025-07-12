@@ -35,15 +35,25 @@ const FinancialItemCard = ({ item, onTogglePayment, onEdit, onDelete }) => {
             </p>
           </div>
           
-          {/* Action Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onDelete(item.id)}
-            className="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg p-2"
-          >
-            <Icon name="Trash2" size={16} />
-          </Button>
+          {/* Action Buttons */}
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onEdit && onEdit(item.id, item)}
+              className="text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg p-2"
+            >
+              <Icon name="Edit" size={16} />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onDelete(item.id)}
+              className="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg p-2"
+            >
+              <Icon name="Trash2" size={16} />
+            </Button>
+          </div>
         </div>
 
         {/* Metadata Section */}
