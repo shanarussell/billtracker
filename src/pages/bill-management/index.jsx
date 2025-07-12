@@ -27,7 +27,6 @@ const BillManagement = () => {
   const [deposits, setDeposits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('dueDate');
   const [selectedBills, setSelectedBills] = useState([]);
@@ -85,11 +84,6 @@ const BillManagement = () => {
   // Filter and sort bills
   const filteredAndSortedBills = React.useMemo(() => {
     let filtered = bills.filter(bill => {
-      // Search filter
-      const matchesSearch = bill?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           bill?.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           bill?.paymentMethod?.toLowerCase().includes(searchTerm.toLowerCase());
-      
       // Status filter
       let matchesStatus = true;
       if (statusFilter === 'paid') {
@@ -100,7 +94,7 @@ const BillManagement = () => {
         matchesStatus = bill.status === 'overdue';
       }
       
-      return matchesSearch && matchesStatus;
+      return matchesStatus;
     });
 
     // Sort bills
@@ -117,7 +111,7 @@ const BillManagement = () => {
     });
 
     return filtered;
-  }, [bills, searchTerm, statusFilter, sortBy]);
+  }, [bills, statusFilter, sortBy]);
 
   // Combine bills and deposits for table view
   const combinedTableItems = React.useMemo(() => {
@@ -291,7 +285,6 @@ const BillManagement = () => {
 
   // Handle filters
   const handleClearFilters = () => {
-    setSearchTerm('');
     setStatusFilter('all');
     setSortBy('dueDate');
   };
@@ -430,8 +423,6 @@ const BillManagement = () => {
 
         {/* Filter Bar */}
         <FilterBar
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
           statusFilter={statusFilter}
           onStatusFilterChange={setStatusFilter}
           sortBy={sortBy}
