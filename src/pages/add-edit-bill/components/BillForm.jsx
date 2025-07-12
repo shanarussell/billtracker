@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import billService from '../../../utils/billService';
-import paymentMethodService from '../../../utils/paymentMethodService';
 import Input from '../../../components/ui/Input';
 import Select from '../../../components/ui/Select';
 import Button from '../../../components/ui/Button';
@@ -20,46 +19,17 @@ const BillForm = () => {
     name: '',
     amount: '',
     dueDate: '',
-    paymentMethod: '',
     isRecurring: false,
     frequency: 'monthly',
     endDate: '',
     notes: '',
-    category: '',
     reminderDays: '3'
   });
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [paymentMethods, setPaymentMethods] = useState([]);
-  const [loadingPaymentMethods, setLoadingPaymentMethods] = useState(false);
 
-  // Load payment methods from database
-  useEffect(() => {
-    const loadPaymentMethods = async () => {
-      if (!user?.id) return;
-      
-      try {
-        setLoadingPaymentMethods(true);
-        const result = await paymentMethodService.getPaymentMethods(user.id);
-        
-        if (result?.success) {
-          setPaymentMethods(result.data);
-        }
-      } catch (error) {
-        console.error('Failed to load payment methods:', error);
-      } finally {
-        setLoadingPaymentMethods(false);
-      }
-    };
 
-    loadPaymentMethods();
-  }, [user?.id]);
-
-  const paymentMethodOptions = paymentMethods.map(method => ({
-    value: method.id,
-    label: method.name
-  }));
 
   const frequencyOptions = [
     { value: 'monthly', label: 'Monthly' },
@@ -67,14 +37,7 @@ const BillForm = () => {
     { value: 'annually', label: 'Annually' }
   ];
 
-  const categoryOptions = [
-    { value: 'utilities', label: 'Utilities' },
-    { value: 'loans', label: 'Loans' },
-    { value: 'credit-cards', label: 'Credit Cards' },
-    { value: 'insurance', label: 'Insurance' },
-    { value: 'subscriptions', label: 'Subscriptions' },
-    { value: 'other', label: 'Other' }
-  ];
+
 
   const reminderOptions = [
     { value: '1', label: '1 day before' },
@@ -122,9 +85,7 @@ const BillForm = () => {
       newErrors.dueDate = 'Due date is required';
     }
 
-    if (!formData.paymentMethod) {
-      newErrors.paymentMethod = 'Payment method is required';
-    }
+
 
     if (formData.isRecurring && formData.endDate && new Date(formData.endDate) <= new Date(formData.dueDate)) {
       newErrors.endDate = 'End date must be after due date';
@@ -146,10 +107,8 @@ const BillForm = () => {
     try {
       const billData = {
         name: formData.name,
-        category: formData.category,
         amount: parseFloat(formData.amount),
         dueDate: formData.dueDate,
-        paymentMethodId: formData.paymentMethod,
         status: 'unpaid',
         isRecurring: formData.isRecurring,
         notes: formData.notes || ''
@@ -255,24 +214,6 @@ const BillForm = () => {
               onChange={(e) => handleInputChange('dueDate', e.target.value)}
               error={errors.dueDate}
               required
-            />
-            
-            <Select
-              label="Payment Method"
-              placeholder="Select payment method"
-              options={paymentMethodOptions}
-              value={formData.paymentMethod}
-              onChange={(value) => handleInputChange('paymentMethod', value)}
-              error={errors.paymentMethod}
-              required
-            />
-            
-            <Select
-              label="Category"
-              placeholder="Select category"
-              options={categoryOptions}
-              value={formData.category}
-              onChange={(value) => handleInputChange('category', value)}
             />
           </div>
         </div>
