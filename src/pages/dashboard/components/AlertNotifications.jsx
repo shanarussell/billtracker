@@ -1,39 +1,89 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 
-const AlertNotifications = ({ alerts, onDismiss, onViewBill }) => {
-  const mockAlerts = [
-    {
-      id: 1,
-      type: 'overdue',
-      title: 'Overdue Bill',
-      message: 'Electric Bill is 3 days overdue',
-      billId: 'bill-1',
-      priority: 'high',
-      timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
-    },
-    {
-      id: 2,
-      type: 'due_soon',
-      title: 'Due Tomorrow',
-      message: 'Credit Card payment due tomorrow',
-      billId: 'bill-2',
-      priority: 'medium',
-      timestamp: new Date(Date.now() + 24 * 60 * 60 * 1000)
-    },
-    {
-      id: 3,
-      type: 'reminder',
-      title: 'Payment Reminder',
-      message: 'Car Insurance due in 3 days',
-      billId: 'bill-3',
-      priority: 'low',
-      timestamp: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
-    }
-  ];
+const AlertNotifications = ({ bills = [], dismissedAlerts = new Set(), onDismiss, onViewBill }) => {
+  // Generate real alerts from bills data
+  const alertsToShow = useMemo(() => {
+    if (!bills || bills.length === 0) return [];
 
-  const alertsToShow = alerts || mockAlerts;
+    const alerts = [];
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const threeDaysFromNow = new Date(today);
+    threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
+
+    bills.forEach((bill) => {
+      const dueDate = new Date(bill.dueDate);
+      const daysUntilDue = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+
+      // Overdue bills
+      if (bill.status !== 'paid' && dueDate < today) {
+        const daysOverdue = Math.abs(daysUntilDue);
+        alerts.push({
+          id: `overdue-${bill.id}`,
+          type: 'overdue',
+          title: 'Overdue Bill',
+          message: `${bill.name} is ${daysOverdue} day${daysOverdue > 1 ? 's' : ''} overdue`,
+          billId: bill.id,
+          priority: 'high',
+          timestamp: dueDate,
+          amount: bill.amount
+        });
+      }
+      // Due tomorrow
+      else if (bill.status !== 'paid' && dueDate.toDateString() === tomorrow.toDateString()) {
+        alerts.push({
+          id: `due-tomorrow-${bill.id}`,
+          type: 'due_soon',
+          title: 'Due Tomorrow',
+          message: `${bill.name} payment due tomorrow`,
+          billId: bill.id,
+          priority: 'high',
+          timestamp: dueDate,
+          amount: bill.amount
+        });
+      }
+      // Due in 3 days
+      else if (bill.status !== 'paid' && dueDate <= threeDaysFromNow && dueDate > tomorrow) {
+        alerts.push({
+          id: `due-soon-${bill.id}`,
+          type: 'reminder',
+          title: 'Payment Reminder',
+          message: `${bill.name} due in ${Math.abs(daysUntilDue)} days`,
+          billId: bill.id,
+          priority: 'medium',
+          timestamp: dueDate,
+          amount: bill.amount
+        });
+      }
+      // Due today
+      else if (bill.status !== 'paid' && dueDate.toDateString() === today.toDateString()) {
+        alerts.push({
+          id: `due-today-${bill.id}`,
+          type: 'due_today',
+          title: 'Due Today',
+          message: `${bill.name} payment is due today`,
+          billId: bill.id,
+          priority: 'high',
+          timestamp: dueDate,
+          amount: bill.amount
+        });
+      }
+    });
+
+    // Sort by priority and timestamp
+    const sortedAlerts = alerts.sort((a, b) => {
+      const priorityOrder = { high: 3, medium: 2, low: 1 };
+      const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
+      if (priorityDiff !== 0) return priorityDiff;
+      return a.timestamp - b.timestamp;
+    });
+
+    // Filter out dismissed alerts
+    return sortedAlerts.filter(alert => !dismissedAlerts.has(alert.id));
+  }, [bills, dismissedAlerts]);
 
   const getAlertStyles = (type, priority) => {
     switch (type) {
@@ -41,6 +91,13 @@ const AlertNotifications = ({ alerts, onDismiss, onViewBill }) => {
         return {
           container: 'bg-red-50 border-red-200',
           icon: 'AlertTriangle',
+          iconColor: '#DC2626',
+          textColor: 'text-red-800'
+        };
+      case 'due_today':
+        return {
+          container: 'bg-red-50 border-red-200',
+          icon: 'AlertCircle',
           iconColor: '#DC2626',
           textColor: 'text-red-800'
         };

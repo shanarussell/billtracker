@@ -143,8 +143,10 @@ const Dashboard = () => {
     navigate('/bill-management');
   };
 
+  const [dismissedAlerts, setDismissedAlerts] = useState(new Set());
+
   const handleDismissAlert = (alertId) => {
-    console.log('Dismissing alert:', alertId);
+    setDismissedAlerts(prev => new Set([...prev, alertId]));
   };
 
   const handleViewBillFromAlert = (billId) => {
@@ -299,6 +301,7 @@ const Dashboard = () => {
             {/* Alert Notifications */}
             <AlertNotifications
               bills={bills}
+              dismissedAlerts={dismissedAlerts}
               onDismiss={handleDismissAlert}
               onViewBill={handleViewBillFromAlert}
             />
