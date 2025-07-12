@@ -19,7 +19,6 @@ const PaymentModal = ({
   const [error, setError] = useState('');
   const [showAddMethod, setShowAddMethod] = useState(false);
   const [newMethodName, setNewMethodName] = useState('');
-  const [newMethodType, setNewMethodType] = useState('credit_card');
 
   useEffect(() => {
     if (isOpen && bill) {
@@ -58,16 +57,15 @@ const PaymentModal = ({
     try {
       const result = await paymentMethodService.createPaymentMethod(currentUser.id, {
         name: newMethodName.trim(),
-        type: newMethodType,
+        type: 'credit_card', // Default type since we're not using types in the UI
         isDefault: paymentMethods.length === 0 // Make default if it's the first one
       });
 
       if (result.success) {
         setPaymentMethods(prev => [...prev, result.data]);
         setSelectedPaymentMethod(result.data.id);
-        setNewMethodName('');
-        setNewMethodType('credit_card');
-        setShowAddMethod(false);
+            setNewMethodName('');
+    setShowAddMethod(false);
       } else {
         setError(result.error || 'Failed to add payment method');
       }
@@ -113,7 +111,6 @@ const PaymentModal = ({
     setError('');
     setShowAddMethod(false);
     setNewMethodName('');
-    setNewMethodType('credit_card');
     onClose();
   };
 
@@ -196,23 +193,6 @@ const PaymentModal = ({
                   onChange={(e) => setNewMethodName(e.target.value)}
                   placeholder="e.g., Chase Credit Card"
                 />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">
-                  Type
-                </label>
-                <Select
-                  value={newMethodType}
-                  onChange={(e) => setNewMethodType(e.target.value)}
-                >
-                  <option value="credit_card">Credit Card</option>
-                  <option value="debit_card">Debit Card</option>
-                  <option value="bank_account">Bank Account</option>
-                  <option value="cash">Cash</option>
-                  <option value="check">Check</option>
-                  <option value="digital_wallet">Digital Wallet</option>
-                </Select>
               </div>
 
               <Button
