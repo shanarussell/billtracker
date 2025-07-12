@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from './Button';
 import Input from './Input';
-import Select from './Select';
+import PaymentMethodSelect from './PaymentMethodSelect';
 import Icon from '../AppIcon';
 import paymentMethodService from '../../utils/paymentMethodService';
 
@@ -75,6 +75,41 @@ const PaymentModal = ({
       }
     } catch (error) {
       setError('Failed to add payment method');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeletePaymentMethod = async (methodId) => {
+    // Don't allow deletion if it's the currently selected method
+    if (methodId === selectedPaymentMethod) {
+      setError('Cannot delete the currently selected payment method. Please select a different method first.');
+      return;
+    }
+
+    // Get the method name for confirmation
+    const methodToDelete = paymentMethods.find(method => method.id === methodId);
+    if (!methodToDelete) return;
+
+    // Simple confirmation
+    const confirmed = window.confirm(`Are you sure you want to delete "${methodToDelete.name}"? This action cannot be undone.`);
+    if (!confirmed) return;
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const result = await paymentMethodService.deletePaymentMethod(methodId);
+      
+      if (result.success) {
+        // Remove the deleted method from state
+        setPaymentMethods(prev => prev.filter(method => method.id !== methodId));
+        setError(''); // Clear any previous errors
+      } else {
+        setError(result.error || 'Failed to delete payment method');
+      }
+    } catch (error) {
+      setError('Failed to delete payment method');
     } finally {
       setIsLoading(false);
     }
@@ -158,7 +193,7 @@ const PaymentModal = ({
               Payment Method
             </label>
             {paymentMethods.length > 0 ? (
-              <Select
+              <PaymentMethodSelect
                 key={paymentMethods.length} // Force re-render when payment methods change
                 value={selectedPaymentMethod}
                 onChange={(value) => setSelectedPaymentMethod(value)}
@@ -170,6 +205,7 @@ const PaymentModal = ({
                   }))
                 ]}
                 placeholder="Select payment method"
+                onDeleteMethod={handleDeletePaymentMethod}
               />
             ) : (
               <p className="text-sm text-muted-foreground mb-2">No payment methods found</p>
