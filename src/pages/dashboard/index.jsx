@@ -211,9 +211,15 @@ const Dashboard = () => {
     }
   };
 
-  // Get upcoming bills (next 5 bills)
+  // Get overdue bills (bills that are overdue)
+  const overdueBills = bills
+    ?.filter(bill => bill.isOverdue)
+    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate)) || [];
+
+  // Get upcoming bills (bills that are not overdue, next 5)
   const upcomingBills = bills
-    ?.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+    ?.filter(bill => !bill.isOverdue)
+    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
     .slice(0, 5) || [];
 
   // Show loading state
@@ -330,6 +336,39 @@ const Dashboard = () => {
                       key={deposit.id}
                       deposit={deposit}
                       onDelete={handleDeleteDeposit}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Overdue Bills */}
+            {overdueBills.length > 0 && (
+              <div className="bg-white rounded-lg border border-red-200 p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-semibold text-red-900">
+                    Overdue Bills
+                  </h2>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleViewAllBills}
+                    iconName="ArrowRight"
+                    iconPosition="right"
+                    iconSize={16}
+                    className="border-red-300 text-red-700 hover:bg-red-50"
+                  >
+                    View All
+                  </Button>
+                </div>
+
+                <div className="space-y-4">
+                  {overdueBills.map((bill) => (
+                    <UpcomingBillCard
+                      key={bill.id}
+                      bill={bill}
+                      onTogglePayment={handleTogglePayment}
+                      onEdit={handleEditBill}
                     />
                   ))}
                 </div>
