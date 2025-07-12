@@ -9,11 +9,6 @@ const QuickActions = ({ onAddDeposit }) => {
     navigate('/add-edit-bill');
   };
 
-  const handleViewAllBills = () => {
-    // Since we removed the bills page, we'll stay on dashboard
-    // The dashboard already shows all bills and deposits
-  };
-
   return (
     <div className="bg-white rounded-lg border border-slate-200 p-6">
       <h3 className="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h3>
@@ -29,18 +24,6 @@ const QuickActions = ({ onAddDeposit }) => {
           className="justify-start"
         >
           Add New Bill
-        </Button>
-        
-        <Button
-          variant="outline"
-          onClick={handleViewAllBills}
-          iconName="List"
-          iconPosition="left"
-          iconSize={18}
-          fullWidth
-          className="justify-start"
-        >
-          View All Bills
         </Button>
         
         <Button

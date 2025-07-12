@@ -8,7 +8,6 @@ import Breadcrumb from '../../components/ui/Breadcrumb';
 import MonthNavigator from '../../components/ui/MonthNavigator';
 import Button from '../../components/ui/Button';
 import MetricsCard from './components/MetricsCard';
-import QuickActions from './components/QuickActions';
 import UpcomingBillCard from './components/UpcomingBillCard';
 import SpendingChart from './components/SpendingChart';
 import FinancialItemCard from './components/FinancialItemCard';
@@ -333,24 +332,19 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Header />
+      <Header onAddDeposit={handleAddDeposit} />
       
       <main className="container mx-auto px-4 py-8">
         <Breadcrumb />
         
         {/* Welcome Section */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">
-                Welcome back, {userProfile?.full_name || user?.email?.split('@')[0] || 'User'}!
-              </h1>
-              <p className="text-slate-600">
-                Here's your financial overview for {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-              </p>
-            </div>
-            <QuickActions onAddDeposit={handleAddDeposit} />
-          </div>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">
+            Welcome back, {userProfile?.full_name || user?.email?.split('@')[0] || 'User'}!
+          </h1>
+          <p className="text-slate-600">
+            Here's your financial overview for {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+          </p>
         </div>
 
         {/* Month Navigator */}

@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import Icon from '../AppIcon';
 import Button from './Button';
 
-const Header = () => {
+const Header = ({ onAddDeposit }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signOut } = useAuth();
@@ -19,6 +19,10 @@ const Header = () => {
   const handleNavigation = (path) => {
     navigate(path);
     setIsMobileMenuOpen(false);
+  };
+
+  const handleAddBill = () => {
+    navigate('/add-edit-bill');
   };
 
   const handleLogout = async () => {
@@ -88,8 +92,32 @@ const Header = () => {
           ))}
         </nav>
 
+        {/* Action Buttons */}
+        <div className="hidden md:flex ml-auto mr-4 space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleAddBill}
+            iconName="Plus"
+            iconPosition="left"
+            iconSize={16}
+          >
+            Add Bill
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onAddDeposit}
+            iconName="DollarSign"
+            iconPosition="left"
+            iconSize={16}
+          >
+            Add Deposit
+          </Button>
+        </div>
+
         {/* Right Side Actions */}
-        <div className="ml-auto flex items-center space-x-4">
+        <div className="flex items-center space-x-4">
           {/* User Menu */}
           <div className="relative" ref={userMenuRef}>
             <Button
@@ -162,6 +190,28 @@ const Header = () => {
                 {item.label}
               </Button>
             ))}
+            <Button
+              variant="outline"
+              onClick={handleAddBill}
+              iconName="Plus"
+              iconPosition="left"
+              iconSize={18}
+              fullWidth
+              className="justify-start transition-colors duration-200"
+            >
+              Add Bill
+            </Button>
+            <Button
+              variant="outline"
+              onClick={onAddDeposit}
+              iconName="DollarSign"
+              iconPosition="left"
+              iconSize={18}
+              fullWidth
+              className="justify-start transition-colors duration-200"
+            >
+              Add Deposit
+            </Button>
           </nav>
         </div>
       )}
