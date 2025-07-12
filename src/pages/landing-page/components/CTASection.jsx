@@ -72,7 +72,7 @@ const CTASection = () => {
           {/* Feature Highlights */}
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 lg:p-12 max-w-5xl mx-auto">
             <h3 className="text-2xl font-bold text-white mb-8">
-              What You'll Get With BillTracker Pro
+              What You'll Get With Easy Bill Tracker
             </h3>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">

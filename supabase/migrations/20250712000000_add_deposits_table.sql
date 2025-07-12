@@ -1,4 +1,4 @@
--- Add Deposits Table for BillTracker Pro
+-- Add Deposits Table for Easy Bill Tracker
 -- This table tracks income/deposits that contribute to available funds
 
 -- 1. Create Deposits Table

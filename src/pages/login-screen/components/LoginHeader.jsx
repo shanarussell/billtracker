@@ -11,7 +11,7 @@ const LoginHeader = () => {
             <Icon name="Receipt" size={28} color="white" />
           </div>
           <div className="text-left">
-            <h1 className="text-2xl font-bold text-foreground">BillTracker Pro</h1>
+            <h1 className="text-2xl font-bold text-foreground">Easy Bill Tracker</h1>
             <p className="text-sm text-muted-foreground">Manage your bills with ease</p>
           </div>
         </div>

@@ -1,4 +1,4 @@
--- BillTracker Pro Database Schema
+-- Easy Bill Tracker Database Schema
 -- Authentication & Bill Management Module
 
 -- 1. Custom Types

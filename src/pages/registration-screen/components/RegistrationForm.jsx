@@ -127,7 +127,7 @@ const RegistrationForm = () => {
       if (result.success) {
         navigate('/dashboard', { 
           state: { 
-            message: 'Account created successfully! Welcome to BillTracker Pro.',
+            message: 'Account created successfully! Welcome to Easy Bill Tracker.',
             type: 'success'
           }
         });

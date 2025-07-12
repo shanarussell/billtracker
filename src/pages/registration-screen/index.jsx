@@ -8,8 +8,8 @@ const RegistrationScreen = () => {
   return (
     <>
       <Helmet>
-        <title>Create Account - BillTracker Pro</title>
-        <meta name="description" content="Create your BillTracker Pro account to start managing your monthly bills efficiently and never miss a payment again." />
+        <title>Create Account - Easy Bill Tracker</title>
+        <meta name="description" content="Create your Easy Bill Tracker account to start managing your monthly bills efficiently and never miss a payment again." />
         <meta name="keywords" content="bill tracker, account registration, financial management, bill management signup" />
       </Helmet>
 
@@ -45,7 +45,7 @@ const RegistrationScreen = () => {
             <div className="mt-16 text-center">
               <div className="border-t pt-8">
                 <p className="text-xs text-muted-foreground">
-                  &copy; {new Date().getFullYear()} BillTracker Pro. All rights reserved.
+                  &copy; {new Date().getFullYear()} Easy Bill Tracker. All rights reserved.
                 </p>
                 <div className="flex items-center justify-center space-x-4 mt-4">
                   <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">

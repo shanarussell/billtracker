@@ -28,7 +28,7 @@ const HeroSection = () => {
               <span className="text-primary block">Monthly Bills</span>
             </h1>
             <p className="text-lg lg:text-xl text-muted-foreground mb-8 max-w-2xl">
-              Never miss a payment again. BillTracker Pro helps you organize, track, and manage all your monthly bills in one secure, easy-to-use platform.
+              Never miss a payment again. Easy Bill Tracker helps you organize, track, and manage all your monthly bills in one secure, easy-to-use platform.
             </p>
             
             {/* Key Benefits */}
@@ -102,7 +102,7 @@ const HeroSection = () => {
             <div className="relative bg-white rounded-2xl shadow-2xl p-6 lg:p-8">
               <Image
                 src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                alt="BillTracker Pro Dashboard Preview"
+                alt="Easy Bill Tracker Dashboard Preview"
                 className="w-full h-auto rounded-lg"
               />
               

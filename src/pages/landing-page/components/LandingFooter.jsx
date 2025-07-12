@@ -68,7 +68,7 @@ const LandingFooter = () => {
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
                   <Icon name="Receipt" size={20} color="white" />
                 </div>
-                <span className="text-xl font-bold">BillTracker Pro</span>
+                <span className="text-xl font-bold">Easy Bill Tracker</span>
               </div>
               
               <p className="text-gray-300 mb-6 max-w-md">
@@ -141,7 +141,7 @@ const LandingFooter = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Copyright */}
             <div className="text-gray-400 text-sm">
-              © {currentYear} BillTracker Pro. All rights reserved.
+              © {currentYear} Easy Bill Tracker. All rights reserved.
             </div>
 
             {/* Social Links */}

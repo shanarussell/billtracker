@@ -33,7 +33,7 @@ const HowItWorksSection = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-5xl font-bold text-foreground mb-6">
-            How BillTracker Pro
+            How Easy Bill Tracker
             <span className="text-primary block">Works for You</span>
           </h2>
           <p className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -154,7 +154,7 @@ const HowItWorksSection = () => {
               Ready to Get Started?
             </h3>
             <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Join thousands of users who have simplified their bill management with BillTracker Pro.
+              Join thousands of users who have simplified their bill management with Easy Bill Tracker.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

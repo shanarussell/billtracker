@@ -70,7 +70,7 @@ const Header = ({ onAddDeposit }) => {
               <Icon name="Receipt" size={20} color="white" />
             </div>
             <span className="text-xl font-semibold text-foreground">
-              BillTracker Pro
+              Easy Bill Tracker
             </span>
           </div>
         </div>

@@ -15,7 +15,7 @@ const AppBranding = () => {
             <Icon name="Receipt" size={28} color="white" />
           </div>
           <div className="text-left">
-            <h1 className="text-2xl font-bold text-foreground">BillTracker Pro</h1>
+            <h1 className="text-2xl font-bold text-foreground">Easy Bill Tracker</h1>
             <p className="text-sm text-muted-foreground">Smart Bill Management</p>
           </div>
         </div>
@@ -27,7 +27,7 @@ const AppBranding = () => {
           Create Your Account
         </h2>
         <p className="text-muted-foreground max-w-md mx-auto">
-          Join BillTracker Pro to take control of your monthly bills and never miss a payment again.
+          Join Easy Bill Tracker to take control of your monthly bills and never miss a payment again.
         </p>
       </div>
 

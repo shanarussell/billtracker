@@ -27,7 +27,7 @@ const TrustBadges = () => {
           Your Financial Privacy is Our Priority
         </h3>
         <p className="text-sm text-muted-foreground">
-          Join thousands of users who trust BillTracker Pro with their financial management
+          Join thousands of users who trust Easy Bill Tracker with their financial management
         </p>
       </div>
 

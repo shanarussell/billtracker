@@ -57,7 +57,7 @@ const FeaturesSection = () => {
             <span className="text-primary block">Manage Your Bills</span>
           </h2>
           <p className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
-            BillTracker Pro provides all the tools you need to take control of your monthly expenses and never miss a payment again.
+            Easy Bill Tracker provides all the tools you need to take control of your monthly expenses and never miss a payment again.
           </p>
         </div>
 
@@ -90,7 +90,7 @@ const FeaturesSection = () => {
               Ready to Get Organized?
             </h3>
             <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Join thousands of users who have taken control of their monthly bills with BillTracker Pro.
+              Join thousands of users who have taken control of their monthly bills with Easy Bill Tracker.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <div className="bg-white rounded-lg p-4 shadow-sm">
