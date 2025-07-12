@@ -12,6 +12,7 @@ import AlertNotifications from './components/AlertNotifications';
 import PaymentModal from '../../components/ui/PaymentModal';
 import DepositModal from '../../components/ui/DepositModal';
 import DepositCard from '../bill-management/components/DepositCard';
+import FinancialItemCard from './components/FinancialItemCard';
 import Button from '../../components/ui/Button';
 import Icon from '../../components/AppIcon';
 
@@ -222,6 +223,24 @@ const Dashboard = () => {
     .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
     .slice(0, 5) || [];
 
+  // Combine deposits and bills into a single list sorted by date
+  const allFinancialItems = [
+    ...deposits.map(deposit => ({
+      ...deposit,
+      type: 'deposit',
+      displayDate: deposit.deposit_date,
+      amount: parseFloat(deposit.amount),
+      isPositive: true
+    })),
+    ...bills.map(bill => ({
+      ...bill,
+      type: 'bill',
+      displayDate: bill.dueDate,
+      amount: parseFloat(bill.amount),
+      isPositive: false
+    }))
+  ].sort((a, b) => new Date(a.displayDate) - new Date(b.displayDate)).slice(0, 8);
+
   // Show loading state
   if (authLoading || loading) {
     return (
@@ -311,13 +330,13 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column */}
           <div className="space-y-8">
-            {/* Recent Deposits */}
-            {deposits.length > 0 && (
-              <div className="bg-white rounded-lg border border-slate-200 p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-semibold text-slate-900">
-                    Recent Deposits
-                  </h2>
+            {/* Financial Items */}
+            <div className="bg-white rounded-lg border border-slate-200 p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-slate-900">
+                  Financial Items
+                </h2>
+                <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
                     size="sm"
@@ -328,27 +347,6 @@ const Dashboard = () => {
                   >
                     Add Deposit
                   </Button>
-                </div>
-
-                <div className="space-y-4">
-                  {deposits.slice(0, 3).map((deposit) => (
-                    <DepositCard
-                      key={deposit.id}
-                      deposit={deposit}
-                      onDelete={handleDeleteDeposit}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Overdue Bills */}
-            {overdueBills.length > 0 && (
-              <div className="bg-white rounded-lg border border-red-200 p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-semibold text-red-900">
-                    Overdue Bills
-                  </h2>
                   <Button
                     variant="outline"
                     size="sm"
@@ -356,66 +354,44 @@ const Dashboard = () => {
                     iconName="ArrowRight"
                     iconPosition="right"
                     iconSize={16}
-                    className="border-red-300 text-red-700 hover:bg-red-50"
                   >
                     View All
                   </Button>
                 </div>
-
-                <div className="space-y-4">
-                  {overdueBills.map((bill) => (
-                    <UpcomingBillCard
-                      key={bill.id}
-                      bill={bill}
-                      onTogglePayment={handleTogglePayment}
-                      onEdit={handleEditBill}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Upcoming Bills */}
-            <div className="bg-white rounded-lg border border-slate-200 p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-slate-900">
-                  Upcoming Bills
-                </h2>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleViewAllBills}
-                  iconName="ArrowRight"
-                  iconPosition="right"
-                  iconSize={16}
-                >
-                  View All
-                </Button>
               </div>
 
-              {upcomingBills?.length > 0 ? (
+              {allFinancialItems?.length > 0 ? (
                 <div className="space-y-4">
-                  {upcomingBills.map((bill) => (
-                    <UpcomingBillCard
-                      key={bill.id}
-                      bill={bill}
+                  {allFinancialItems.map((item) => (
+                    <FinancialItemCard
+                      key={`${item.type}-${item.id}`}
+                      item={item}
                       onTogglePayment={handleTogglePayment}
                       onEdit={handleEditBill}
+                      onDelete={handleDeleteDeposit}
                     />
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-8">
                   <Icon name="Calendar" size={48} color="#64748B" className="mx-auto mb-3" />
-                  <p className="text-slate-600">No upcoming bills</p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate('/add-edit-bill')}
-                    className="mt-4"
-                  >
-                    Add Your First Bill
-                  </Button>
+                  <p className="text-slate-600">No financial items</p>
+                  <div className="flex items-center justify-center gap-4 mt-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate('/add-edit-bill')}
+                    >
+                      Add Your First Bill
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleAddDeposit}
+                    >
+                      Add Deposit
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
