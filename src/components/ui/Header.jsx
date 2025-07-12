@@ -13,8 +13,7 @@ const Header = () => {
   const userMenuRef = useRef(null);
 
   const navigationItems = [
-    { label: 'Dashboard', path: '/dashboard', icon: 'LayoutDashboard' },
-    { label: 'Bills', path: '/bill-management', icon: 'Receipt' }
+    { label: 'Dashboard', path: '/dashboard', icon: 'LayoutDashboard' }
   ];
 
   const handleNavigation = (path) => {

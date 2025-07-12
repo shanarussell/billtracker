@@ -10,7 +10,8 @@ const QuickActions = ({ onAddDeposit }) => {
   };
 
   const handleViewAllBills = () => {
-    navigate('/bill-management');
+    // Since we removed the bills page, we'll stay on dashboard
+    // The dashboard already shows all bills and deposits
   };
 
   return (

@@ -150,14 +150,13 @@ const FinancialSummary = () => {
   };
 
   const handleBillClick = (bill) => {
-    navigate('/bill-management', { state: { selectedBill: bill } });
+    // Navigate to dashboard instead of bills page
+    // navigate('/bill-management', { state: { selectedBill: bill } });
   };
 
-  const handleViewBill = (billId) => {
-    const bill = mockBills.find(b => b.id === billId);
-    if (bill) {
-      navigate('/add-edit-bill', { state: { bill, mode: 'edit' } });
-    }
+  const handleViewBill = (bill) => {
+    // Since we removed the bills page, we'll stay on dashboard
+    // The dashboard already shows all bills and deposits
   };
 
   const handleDismissAlert = (alertId) => {

@@ -7,7 +7,6 @@ import LoginScreen from "pages/login-screen";
 import AddEditBill from "pages/add-edit-bill";
 import RegistrationScreen from "pages/registration-screen";
 import Dashboard from "pages/dashboard";
-import BillManagement from "pages/bill-management";
 import LandingPage from "pages/landing-page";
 import FinancialSummary from "pages/financial-summary";
 import NotFound from "pages/NotFound";
@@ -24,7 +23,6 @@ const Routes = () => {
         <Route path="/add-edit-bill" element={<AddEditBill />} />
         <Route path="/registration-screen" element={<RegistrationScreen />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/bill-management" element={<BillManagement />} />
         <Route path="/landing-page" element={<LandingPage />} />
         <Route path="/financial-summary" element={<FinancialSummary />} />
         <Route path="*" element={<NotFound />} />

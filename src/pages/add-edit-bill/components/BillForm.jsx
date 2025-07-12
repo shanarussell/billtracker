@@ -172,10 +172,11 @@ const BillForm = () => {
       }
       
       if (result?.success) {
-        navigate('/bill-management', { 
+        // Navigate back to dashboard with success message
+        navigate('/dashboard', {
           state: { 
-            message: isEditMode ? 'Bill updated successfully!' : 'Bill added successfully!',
-            type: 'success'
+            message: isEditMode ? "Bill updated successfully!" : "Bill added successfully!", 
+            type: "success" 
           }
         });
       } else {
@@ -190,7 +191,7 @@ const BillForm = () => {
   };
 
   const handleCancel = () => {
-    navigate('/bill-management');
+    navigate('/dashboard');
   };
 
   const getNextPaymentDates = () => {

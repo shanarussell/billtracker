@@ -6,15 +6,15 @@ import depositService from '../../utils/depositService';
 import Header from '../../components/ui/Header';
 import Breadcrumb from '../../components/ui/Breadcrumb';
 import MonthNavigator from '../../components/ui/MonthNavigator';
+import Button from '../../components/ui/Button';
 import MetricsCard from './components/MetricsCard';
-import UpcomingBillCard from './components/UpcomingBillCard';
 import QuickActions from './components/QuickActions';
+import UpcomingBillCard from './components/UpcomingBillCard';
+import SpendingChart from './components/SpendingChart';
+import FinancialItemCard from './components/FinancialItemCard';
 import AlertNotifications from './components/AlertNotifications';
 import PaymentModal from '../../components/ui/PaymentModal';
 import DepositModal from '../../components/ui/DepositModal';
-import DepositCard from '../bill-management/components/DepositCard';
-import FinancialItemCard from './components/FinancialItemCard';
-import Button from '../../components/ui/Button';
 import Icon from '../../components/AppIcon';
 
 const Dashboard = () => {
@@ -159,7 +159,14 @@ const Dashboard = () => {
   };
 
   const handleViewAllBills = () => {
-    navigate('/bill-management');
+    // Since we removed the bills page, we'll stay on dashboard
+    // The dashboard already shows all bills and deposits
+  };
+
+  const handleViewBill = (billId) => {
+    // Since we removed the bills page, we'll stay on dashboard
+    // The dashboard already shows all bills and deposits
+    // navigate(`/bill-management?highlight=${billId}`);
   };
 
   const [dismissedAlerts, setDismissedAlerts] = useState(new Set());

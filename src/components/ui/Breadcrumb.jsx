@@ -7,14 +7,13 @@ const Breadcrumb = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const routeMap = {
+  const breadcrumbConfig = {
     '/dashboard': { label: 'Dashboard', parent: null },
-    '/bill-management': { label: 'Bills', parent: '/dashboard' },
-    '/add-edit-bill': { label: 'Add Bill', parent: '/bill-management' },
+    '/add-edit-bill': { label: 'Add Bill', parent: '/dashboard' },
     '/financial-summary': { label: 'Summary', parent: '/dashboard' }
   };
 
-  const currentRoute = routeMap[location.pathname];
+  const currentRoute = breadcrumbConfig[location.pathname];
   
   if (!currentRoute || location.pathname === '/dashboard') {
     return null;
@@ -22,11 +21,11 @@ const Breadcrumb = () => {
 
   const buildBreadcrumbPath = (pathname) => {
     const path = [];
-    let current = routeMap[pathname];
+    let current = breadcrumbConfig[pathname];
     
     while (current) {
-      path.unshift({ pathname: Object.keys(routeMap).find(key => routeMap[key] === current), ...current });
-      current = current.parent ? routeMap[current.parent] : null;
+      path.unshift({ pathname: Object.keys(breadcrumbConfig).find(key => breadcrumbConfig[key] === current), ...current });
+      current = current.parent ? breadcrumbConfig[current.parent] : null;
     }
     
     return path;
