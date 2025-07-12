@@ -27,7 +27,7 @@ class BillService {
         name: bill.name,
         category: bill.category,
         amount: parseFloat(bill.amount),
-        dueDate: bill.due_date,
+        dueDate: bill.due_date, // Keep as-is, will be handled by formatDate
         paymentMethod: bill.payment_method?.name || 'Not Set',
         status: bill.status,
         isPaid: bill.status === 'paid',

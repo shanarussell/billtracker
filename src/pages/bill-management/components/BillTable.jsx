@@ -1,6 +1,6 @@
 import React from 'react';
-
 import Button from '../../../components/ui/Button';
+import { formatDate } from '../../../utils/cn';
 
 const BillTable = ({ bills, onTogglePayment, onEdit, onDelete, onSelect, selectedBills, onSelectAll }) => {
   const getStatusBadge = (status, dueDate) => {
@@ -17,13 +17,7 @@ const BillTable = ({ bills, onTogglePayment, onEdit, onDelete, onSelect, selecte
     return <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pending</span>;
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
+
 
   const formatAmount = (amount) => {
     return new Intl.NumberFormat('en-US', {

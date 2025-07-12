@@ -1,6 +1,7 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
+import { formatDate } from '../../../utils/cn';
 
 const BillCard = ({ bill, onTogglePayment, onEdit, onDelete, onSelect, isSelected }) => {
   const getStatusColor = (status, dueDate) => {
@@ -25,13 +26,7 @@ const BillCard = ({ bill, onTogglePayment, onEdit, onDelete, onSelect, isSelecte
     return { name: 'Clock', color: 'text-muted-foreground' };
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
+
 
   const formatAmount = (amount) => {
     return new Intl.NumberFormat('en-US', {
