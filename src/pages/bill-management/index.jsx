@@ -86,8 +86,13 @@ const BillManagement = () => {
   // Helper function to check if a date is in the selected month
   const isInSelectedMonth = (dateString) => {
     const date = new Date(dateString);
-    return date.getMonth() === currentMonth.getMonth() && 
-           date.getFullYear() === currentMonth.getFullYear();
+    const isInMonth = date.getMonth() === currentMonth.getMonth() && 
+                      date.getFullYear() === currentMonth.getFullYear();
+    
+    // Debug logging for troubleshooting
+    console.log(`Date: ${dateString}, Month: ${date.getMonth()}, Year: ${date.getFullYear()}, Current Month: ${currentMonth.getMonth()}, Current Year: ${currentMonth.getFullYear()}, IsInMonth: ${isInMonth}`);
+    
+    return isInMonth;
   };
 
   // Filter and sort bills
@@ -124,7 +129,7 @@ const BillManagement = () => {
     });
 
     return filtered;
-  }, [bills, statusFilter, sortBy]);
+  }, [bills, statusFilter, sortBy, currentMonth]);
 
   // Combine bills and deposits for table view (filtered by month)
   const combinedTableItems = React.useMemo(() => {
