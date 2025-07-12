@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/ui/Header';
 import Breadcrumb from '../../components/ui/Breadcrumb';
-import MonthNavigator from './components/MonthNavigator';
+import MonthNavigator from '../../components/ui/MonthNavigator';
 import MetricsCard from './components/MetricsCard';
 import SpendingBreakdown from './components/SpendingBreakdown';
 import CashFlowChart from './components/CashFlowChart';
@@ -13,7 +13,7 @@ import AlertNotifications from './components/AlertNotifications';
 
 const FinancialSummary = () => {
   const navigate = useNavigate();
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDateRange, setSelectedDateRange] = useState('current-month');
 
   // Mock financial data

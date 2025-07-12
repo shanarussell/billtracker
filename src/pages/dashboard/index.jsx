@@ -5,6 +5,7 @@ import billService from '../../utils/billService';
 import depositService from '../../utils/depositService';
 import Header from '../../components/ui/Header';
 import Breadcrumb from '../../components/ui/Breadcrumb';
+import MonthNavigator from '../../components/ui/MonthNavigator';
 import MetricsCard from './components/MetricsCard';
 import UpcomingBillCard from './components/UpcomingBillCard';
 import QuickActions from './components/QuickActions';
@@ -26,6 +27,7 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [paymentModal, setPaymentModal] = useState({ isOpen: false, bill: null });
   const [depositModal, setDepositModal] = useState({ isOpen: false });
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   useEffect(() => {
     let isMounted = true;
@@ -295,8 +297,16 @@ const Dashboard = () => {
             Welcome back, {userProfile?.full_name || user?.email?.split('@')[0] || 'User'}!
           </h1>
           <p className="text-slate-600">
-            Here's your financial overview for {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+            Here's your financial overview for {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
           </p>
+        </div>
+
+        {/* Month Navigator */}
+        <div className="mb-6">
+          <MonthNavigator
+            currentMonth={currentMonth}
+            onMonthChange={setCurrentMonth}
+          />
         </div>
 
         {/* Metrics Cards */}

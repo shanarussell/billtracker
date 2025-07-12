@@ -5,6 +5,7 @@ import billService from '../../utils/billService';
 import depositService from '../../utils/depositService';
 import Header from '../../components/ui/Header';
 import Breadcrumb from '../../components/ui/Breadcrumb';
+import MonthNavigator from '../../components/ui/MonthNavigator';
 import Button from '../../components/ui/Button';
 import BillCard from './components/BillCard';
 import BillTable from './components/BillTable';
@@ -34,6 +35,7 @@ const BillManagement = () => {
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, billId: null, billName: '', isMultiple: false });
   const [paymentModal, setPaymentModal] = useState({ isOpen: false, bill: null });
   const [depositModal, setDepositModal] = useState({ isOpen: false });
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   // Load bills
   useEffect(() => {
@@ -419,6 +421,14 @@ const BillManagement = () => {
               Add New Bill
             </Button>
           </div>
+        </div>
+
+        {/* Month Navigator */}
+        <div className="mb-6">
+          <MonthNavigator
+            currentMonth={currentMonth}
+            onMonthChange={setCurrentMonth}
+          />
         </div>
 
         {/* Filter Bar */}
