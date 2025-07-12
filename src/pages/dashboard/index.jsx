@@ -75,8 +75,12 @@ const Dashboard = () => {
 
     loadDashboardData();
 
+    // Reload data every 5 minutes to ensure overdue status is current
+    const interval = setInterval(loadDashboardData, 5 * 60 * 1000);
+
     return () => {
       isMounted = false;
+      clearInterval(interval);
     };
   }, [user?.id, authLoading]);
 
@@ -433,7 +437,10 @@ const Dashboard = () => {
               <p className="text-sm text-slate-600">Pending</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-red-600">{bills?.filter(bill => bill.isOverdue).length || 0}</p>
+              <p className="text-2xl font-bold text-red-600">
+                {bills?.filter(bill => bill.isOverdue).length || 0}
+                {/* Debug: {bills?.length || 0} total bills, {bills?.filter(bill => bill.isPaid).length || 0} paid */}
+              </p>
               <p className="text-sm text-slate-600">Overdue</p>
             </div>
             <div className="text-center">
