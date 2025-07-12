@@ -216,12 +216,37 @@ const Dashboard = () => {
       const result = await depositService.deleteDeposit(depositId);
       
       if (result?.success) {
-        setDeposits(prev => prev.filter(deposit => deposit.id !== depositId));
-        
-        // Reload metrics to update available funds
-        const metricsResult = await billService.getFinancialMetrics(user.id);
-        if (metricsResult?.success) {
-          setMetrics(metricsResult.data);
+        // Reload all dashboard data to ensure everything is up to date
+        try {
+          setLoading(true);
+          
+          // Reload bills, deposits, and metrics
+          const billsResult = await billService.getBills(user.id);
+          const depositsResult = await depositService.getDeposits(user.id);
+          const metricsResult = await billService.getFinancialMetrics(user.id);
+
+          if (billsResult?.success) {
+            setBills(billsResult.data);
+          } else {
+            setError(billsResult?.error || 'Failed to reload bills');
+          }
+
+          if (depositsResult?.success) {
+            setDeposits(depositsResult.data);
+          } else {
+            setError(depositsResult?.error || 'Failed to reload deposits');
+          }
+
+          if (metricsResult?.success) {
+            setMetrics(metricsResult.data);
+          } else {
+            setError(metricsResult?.error || 'Failed to reload financial metrics');
+          }
+        } catch (error) {
+          setError('Failed to refresh dashboard data');
+          console.log('Dashboard refresh error:', error);
+        } finally {
+          setLoading(false);
         }
       } else {
         setError(result?.error || 'Failed to delete deposit');
@@ -260,26 +285,47 @@ const Dashboard = () => {
         for (const futureBill of futureBills) {
           await billService.deleteBill(futureBill.id);
         }
-        
-        setBills(prev => prev.filter(b => 
-          !(b.name === bill.name && b.dueDate >= bill.dueDate)
-        ));
       } else {
         // Delete only this bill
         const result = await billService.deleteBill(bill.id);
         
-        if (result?.success) {
-          setBills(prev => prev.filter(b => b.id !== bill.id));
-        } else {
+        if (!result?.success) {
           setError(result?.error || 'Failed to delete bill');
           return;
         }
       }
       
-      // Reload metrics
-      const metricsResult = await billService.getFinancialMetrics(user.id);
-      if (metricsResult?.success) {
-        setMetrics(metricsResult.data);
+      // Reload all dashboard data to ensure everything is up to date
+      try {
+        setLoading(true);
+        
+        // Reload bills, deposits, and metrics
+        const billsResult = await billService.getBills(user.id);
+        const depositsResult = await depositService.getDeposits(user.id);
+        const metricsResult = await billService.getFinancialMetrics(user.id);
+
+        if (billsResult?.success) {
+          setBills(billsResult.data);
+        } else {
+          setError(billsResult?.error || 'Failed to reload bills');
+        }
+
+        if (depositsResult?.success) {
+          setDeposits(depositsResult.data);
+        } else {
+          setError(depositsResult?.error || 'Failed to reload deposits');
+        }
+
+        if (metricsResult?.success) {
+          setMetrics(metricsResult.data);
+        } else {
+          setError(metricsResult?.error || 'Failed to reload financial metrics');
+        }
+      } catch (error) {
+        setError('Failed to refresh dashboard data');
+        console.log('Dashboard refresh error:', error);
+      } finally {
+        setLoading(false);
       }
       
       setDeleteModal({ isOpen: false, bill: null });
