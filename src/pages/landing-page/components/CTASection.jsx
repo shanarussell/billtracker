@@ -21,11 +21,11 @@ const CTASection = () => {
           {/* Main CTA Content */}
           <div className="max-w-4xl mx-auto mb-12">
             <h2 className="text-3xl lg:text-5xl font-bold text-white mb-6">
-              Start Managing Your Bills
-              <span className="block">Like a Pro Today</span>
+              Start Tracking Your Finances
+              <span className="block">in One Simple Place</span>
             </h2>
             <p className="text-lg lg:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Join thousands of users who have taken control of their monthly expenses. Get organized, save money, and never miss a payment again.
+              Join users who have simplified their financial tracking. Manage bills and income together, and never miss a payment again.
             </p>
 
             {/* CTA Buttons */}
@@ -80,24 +80,8 @@ const CTASection = () => {
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
                   <Icon name="Receipt" size={28} className="text-white" />
                 </div>
-                <h4 className="font-semibold text-white mb-2">Bill Organization</h4>
-                <p className="text-sm text-white/80">Keep all bills in one place</p>
-              </div>
-
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
-                  <Icon name="Bell" size={28} className="text-white" />
-                </div>
-                <h4 className="font-semibold text-white mb-2">Due Date Alerts</h4>
-                <p className="text-sm text-white/80">Never miss a payment</p>
-              </div>
-
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
-                  <Icon name="BarChart3" size={28} className="text-white" />
-                </div>
-                <h4 className="font-semibold text-white mb-2">Financial Insights</h4>
-                <p className="text-sm text-white/80">Track spending patterns</p>
+                <h4 className="font-semibold text-white mb-2">Bill & Income Tracking</h4>
+                <p className="text-sm text-white/80">Manage both in one place</p>
               </div>
 
               <div className="text-center">
@@ -105,7 +89,23 @@ const CTASection = () => {
                   <Icon name="Repeat" size={28} className="text-white" />
                 </div>
                 <h4 className="font-semibold text-white mb-2">Recurring Bills</h4>
-                <p className="text-sm text-white/80">Automate bill tracking</p>
+                <p className="text-sm text-white/80">Weekly to annual frequencies</p>
+              </div>
+
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
+                  <Icon name="CheckCircle" size={28} className="text-white" />
+                </div>
+                <h4 className="font-semibold text-white mb-2">Payment Tracking</h4>
+                <p className="text-sm text-white/80">Mark paid/unpaid status</p>
+              </div>
+
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-4">
+                  <Icon name="BarChart3" size={28} className="text-white" />
+                </div>
+                <h4 className="font-semibold text-white mb-2">Financial Metrics</h4>
+                <p className="text-sm text-white/80">Income vs expenses view</p>
               </div>
             </div>
           </div>

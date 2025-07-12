@@ -9,7 +9,7 @@ const TestimonialsSection = () => {
       name: "Sarah Johnson",
       role: "Marketing Manager",
       avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      content: `Easy Bill Tracker has completely transformed how I manage my monthly expenses. I used to miss payments and pay late fees, but now everything is organized and I never miss a due date.`,
+      content: `Easy Bill Tracker has completely transformed how I track my finances. I can see both my bills and income in one place, and the recurring bill feature saves me so much time.`,
       rating: 5
     },
     {
@@ -47,7 +47,7 @@ const TestimonialsSection = () => {
             <span className="text-primary block">Happy Users</span>
           </h2>
           <p className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
-            See what our users are saying about how Easy Bill Tracker has helped them take control of their finances.
+            See what users are saying about how Easy Bill Tracker has helped them track their finances better.
           </p>
         </div>
 

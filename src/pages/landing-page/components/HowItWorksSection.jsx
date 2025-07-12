@@ -6,23 +6,23 @@ const HowItWorksSection = () => {
   const steps = [
     {
       id: 1,
-      title: "Sign Up & Set Up",
-      description: "Create your free account and add your monthly bills in just a few clicks. Import from your bank or add manually.",
+      title: "Add Your Bills & Income",
+      description: "Create your account and start adding your monthly bills and income sources. Categorize bills and track payment methods.",
       icon: "UserPlus",
       image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     },
     {
       id: 2,
-      title: "Organize & Track",
-      description: "Set up recurring bills, due dates, and payment methods. Our system automatically tracks everything for you.",
-      icon: "Calendar",
+      title: "Set Up Recurring Bills",
+      description: "Configure recurring bills with weekly, monthly, quarterly, or annual frequencies. Our system automatically generates future payments.",
+      icon: "Repeat",
       image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     },
     {
       id: 3,
-      title: "Stay on Top",
-      description: "Get visual alerts for upcoming bills, mark payments as complete, and see your financial summary at a glance.",
-      icon: "CheckCircle",
+      title: "Track & Monitor",
+      description: "Mark payments as complete, track your income vs expenses, and get alerts for overdue bills. View comprehensive financial metrics.",
+      icon: "BarChart3",
       image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
     }
   ];
@@ -37,7 +37,7 @@ const HowItWorksSection = () => {
             <span className="text-primary block">Works for You</span>
           </h2>
           <p className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
-            Get started in minutes and take control of your monthly bills with our simple three-step process.
+            Get started in minutes and take control of your finances with our simple three-step process.
           </p>
         </div>
 
@@ -75,15 +75,15 @@ const HowItWorksSection = () => {
                     <>
                       <div className="flex items-center justify-center lg:justify-start">
                         <Icon name="Check" size={16} className="text-success mr-2" />
-                        <span className="text-sm text-muted-foreground">Quick 2-minute setup</span>
+                        <span className="text-sm text-muted-foreground">Add bills with categories</span>
                       </div>
                       <div className="flex items-center justify-center lg:justify-start">
                         <Icon name="Check" size={16} className="text-success mr-2" />
-                        <span className="text-sm text-muted-foreground">Import from bank or add manually</span>
+                        <span className="text-sm text-muted-foreground">Track income sources</span>
                       </div>
                       <div className="flex items-center justify-center lg:justify-start">
                         <Icon name="Check" size={16} className="text-success mr-2" />
-                        <span className="text-sm text-muted-foreground">Secure account protection</span>
+                        <span className="text-sm text-muted-foreground">Set payment methods</span>
                       </div>
                     </>
                   )}
@@ -92,15 +92,15 @@ const HowItWorksSection = () => {
                     <>
                       <div className="flex items-center justify-center lg:justify-start">
                         <Icon name="Check" size={16} className="text-success mr-2" />
-                        <span className="text-sm text-muted-foreground">Set up recurring bills automatically</span>
+                        <span className="text-sm text-muted-foreground">Weekly, monthly, quarterly, annual</span>
                       </div>
                       <div className="flex items-center justify-center lg:justify-start">
                         <Icon name="Check" size={16} className="text-success mr-2" />
-                        <span className="text-sm text-muted-foreground">Track multiple payment methods</span>
+                        <span className="text-sm text-muted-foreground">Automatic future bill generation</span>
                       </div>
                       <div className="flex items-center justify-center lg:justify-start">
                         <Icon name="Check" size={16} className="text-success mr-2" />
-                        <span className="text-sm text-muted-foreground">Organize by categories</span>
+                        <span className="text-sm text-muted-foreground">Edit or delete individual instances</span>
                       </div>
                     </>
                   )}
@@ -109,15 +109,15 @@ const HowItWorksSection = () => {
                     <>
                       <div className="flex items-center justify-center lg:justify-start">
                         <Icon name="Check" size={16} className="text-success mr-2" />
-                        <span className="text-sm text-muted-foreground">Visual payment status indicators</span>
+                        <span className="text-sm text-muted-foreground">Mark payments as paid/unpaid</span>
                       </div>
                       <div className="flex items-center justify-center lg:justify-start">
                         <Icon name="Check" size={16} className="text-success mr-2" />
-                        <span className="text-sm text-muted-foreground">Comprehensive financial dashboard</span>
+                        <span className="text-sm text-muted-foreground">View income vs expenses</span>
                       </div>
                       <div className="flex items-center justify-center lg:justify-start">
                         <Icon name="Check" size={16} className="text-success mr-2" />
-                        <span className="text-sm text-muted-foreground">Income vs expenses tracking</span>
+                        <span className="text-sm text-muted-foreground">Get overdue bill alerts</span>
                       </div>
                     </>
                   )}
@@ -151,10 +151,10 @@ const HowItWorksSection = () => {
         <div className="text-center mt-16 lg:mt-24">
           <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-2xl p-8 lg:p-12">
             <h3 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
-              Ready to Get Started?
+              Ready to Start Tracking?
             </h3>
             <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Join thousands of users who have simplified their bill management with Easy Bill Tracker.
+              Join users who have simplified their financial tracking with Easy Bill Tracker.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

@@ -6,43 +6,43 @@ const FeaturesSection = () => {
     {
       id: 1,
       icon: "Receipt",
-      title: "Bill Organization",
-      description: "Keep all your monthly bills organized in one place. Never lose track of what\'s due and when.",
+      title: "Bill Management",
+      description: "Add, edit, and organize all your monthly bills with categories. Track due dates and payment status.",
       color: "text-blue-600"
     },
     {
       id: 2,
-      icon: "CheckCircle",
-      title: "Payment Tracking",
-      description: "Mark bills as paid or unpaid with a simple click. Visual indicators show your payment status at a glance.",
+      icon: "DollarSign",
+      title: "Income Tracking",
+      description: "Record deposits and income sources. See your total income alongside your bills for better financial planning.",
       color: "text-green-600"
     },
     {
       id: 3,
-      icon: "CreditCard",
-      title: "Payment Methods",
-      description: "Track which payment method you used for each bill. Support for all major cards and accounts.",
+      icon: "Repeat",
+      title: "Recurring Bills",
+      description: "Set up weekly, monthly, quarterly, or annual recurring bills. Automatic generation of future payments.",
       color: "text-purple-600"
     },
     {
       id: 4,
-      icon: "Calendar",
-      title: "Due Date Alerts",
-      description: "Get visual alerts for upcoming and overdue bills. Never miss another payment deadline.",
+      icon: "CheckCircle",
+      title: "Payment Tracking",
+      description: "Mark bills as paid or unpaid with payment method tracking. Visual status indicators for easy monitoring.",
       color: "text-orange-600"
     },
     {
       id: 5,
       icon: "BarChart3",
-      title: "Financial Summary",
-      description: "See your total expenses, income comparison, and remaining budget in comprehensive dashboards.",
+      title: "Financial Metrics",
+      description: "View total deposits, bills due, paid amounts, and remaining balance in comprehensive monthly summaries.",
       color: "text-indigo-600"
     },
     {
       id: 6,
-      icon: "Repeat",
-      title: "Recurring Bills",
-      description: "Set up recurring bills with automatic tracking. Perfect for loans, utilities, and subscriptions.",
+      icon: "AlertTriangle",
+      title: "Smart Alerts",
+      description: "Get notifications for overdue bills and upcoming payments. Never miss a payment deadline again.",
       color: "text-teal-600"
     }
   ];
@@ -53,11 +53,11 @@ const FeaturesSection = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-5xl font-bold text-foreground mb-6">
-            Everything You Need to
-            <span className="text-primary block">Manage Your Bills</span>
+            Complete Financial
+            <span className="text-primary block">Tracking Solution</span>
           </h2>
           <p className="text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
-            Easy Bill Tracker provides all the tools you need to take control of your monthly expenses and never miss a payment again.
+            Easy Bill Tracker combines bill management and income tracking in one simple platform. Track your money flow and never miss a payment.
           </p>
         </div>
 
@@ -87,10 +87,10 @@ const FeaturesSection = () => {
         <div className="text-center mt-16">
           <div className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-8 lg:p-12">
             <h3 className="text-2xl lg:text-3xl font-bold text-foreground mb-4">
-              Ready to Get Organized?
+              Ready to Track Your Finances?
             </h3>
             <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Join thousands of users who have taken control of their monthly bills with Easy Bill Tracker.
+              Join users who have simplified their financial tracking with Easy Bill Tracker.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <div className="bg-white rounded-lg p-4 shadow-sm">

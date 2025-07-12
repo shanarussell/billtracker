@@ -24,26 +24,26 @@ const HeroSection = () => {
           {/* Content */}
           <div className="text-center lg:text-left">
             <h1 className="text-4xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-              Take Control of Your
-              <span className="text-primary block">Monthly Bills</span>
+              Track Bills & Income
+              <span className="text-primary block">in One Place</span>
             </h1>
             <p className="text-lg lg:text-xl text-muted-foreground mb-8 max-w-2xl">
-              Never miss a payment again. Easy Bill Tracker helps you organize, track, and manage all your monthly bills in one secure, easy-to-use platform.
+              Easy Bill Tracker helps you manage both your bills and income in one simple dashboard. Never miss a payment and always know your financial status.
             </p>
             
             {/* Key Benefits */}
             <div className="flex flex-wrap gap-4 justify-center lg:justify-start mb-8">
               <div className="flex items-center bg-white/80 rounded-full px-4 py-2 shadow-sm">
                 <div className="w-2 h-2 bg-success rounded-full mr-2"></div>
-                <span className="text-sm font-medium text-foreground">Never Miss Payments</span>
+                <span className="text-sm font-medium text-foreground">Track Bills & Income</span>
               </div>
               <div className="flex items-center bg-white/80 rounded-full px-4 py-2 shadow-sm">
                 <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
-                <span className="text-sm font-medium text-foreground">Track All Bills</span>
+                <span className="text-sm font-medium text-foreground">Recurring Bills</span>
               </div>
               <div className="flex items-center bg-white/80 rounded-full px-4 py-2 shadow-sm">
                 <div className="w-2 h-2 bg-accent rounded-full mr-2"></div>
-                <span className="text-sm font-medium text-foreground">Budget Better</span>
+                <span className="text-sm font-medium text-foreground">Payment Tracking</span>
               </div>
             </div>
 
@@ -57,7 +57,7 @@ const HeroSection = () => {
                 iconPosition="right"
                 className="text-lg px-8 py-3"
               >
-                Start Organizing Your Bills Today
+                Start Tracking Your Finances
               </Button>
               <Button
                 variant="outline"
