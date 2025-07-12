@@ -118,6 +118,13 @@ const FinancialItemCard = ({ item, onTogglePayment, onEdit, onDelete }) => {
           <span>{item.category}</span>
         </div>
 
+        {item.isPaid && item.paymentMethod && (
+          <div className="flex items-center gap-2 text-sm text-green-600">
+            <Icon name="CreditCard" size={14} />
+            <span>Paid via {item.paymentMethod}</span>
+          </div>
+        )}
+
         {item.notes && (
           <div className="flex items-start gap-2 text-sm text-slate-600">
             <Icon name="FileText" size={14} className="mt-0.5" />
