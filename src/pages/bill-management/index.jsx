@@ -449,10 +449,9 @@ const BillManagement = () => {
             </div>
             <h3 className="text-lg font-semibold text-foreground mb-2">No bills found</h3>
             <p className="text-muted-foreground mb-4">
-              {searchTerm || statusFilter !== 'all' ?'Try adjusting your filters or search terms' :'Get started by adding your first bill'
-              }
+              {statusFilter !== 'all' ? 'Try adjusting your filters' : 'Get started by adding your first bill'}
             </p>
-            {!searchTerm && statusFilter === 'all' && (
+            {statusFilter === 'all' && (
               <Button
                 variant="default"
                 onClick={() => navigate('/add-edit-bill')}
