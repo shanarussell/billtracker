@@ -107,6 +107,7 @@ const BillForm = () => {
     try {
       const billData = {
         name: formData.name,
+        category: 'Other', // Default category since it's required by database
         amount: parseFloat(formData.amount),
         dueDate: formData.dueDate,
         status: 'unpaid',
