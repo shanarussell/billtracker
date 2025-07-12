@@ -35,7 +35,10 @@ const BillManagement = () => {
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, billId: null, billName: '', isMultiple: false });
   const [paymentModal, setPaymentModal] = useState({ isOpen: false, bill: null });
   const [depositModal, setDepositModal] = useState({ isOpen: false });
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
 
   // Load bills
   useEffect(() => {
@@ -53,16 +56,26 @@ const BillManagement = () => {
 
         if (!isMounted) return;
 
+        console.log('🔍 Debug - Bills result:', billsResult);
+        console.log('🔍 Debug - Deposits result:', depositsResult);
+        console.log('🔍 Debug - User ID:', user?.id);
+        console.log('🔍 Debug - User object:', user);
+
         if (billsResult?.success) {
           setBills(billsResult.data || []);
+          console.log('✅ Bills loaded:', billsResult.data?.length || 0);
         } else {
           setError(billsResult?.error || 'Failed to load bills');
+          console.log('❌ Bills error:', billsResult?.error);
         }
 
         if (depositsResult?.success) {
           setDeposits(depositsResult.data || []);
+          console.log('✅ Deposits loaded:', depositsResult.data?.length || 0);
+          console.log('📅 Deposits data:', depositsResult.data);
         } else {
           setError(depositsResult?.error || 'Failed to load deposits');
+          console.log('❌ Deposits error:', depositsResult?.error);
         }
       } catch (error) {
         if (isMounted) {
@@ -85,14 +98,23 @@ const BillManagement = () => {
 
   // Helper function to check if a date is in the selected month
   const isInSelectedMonth = (dateString) => {
-    const date = new Date(dateString);
-    const isInMonth = date.getMonth() === currentMonth.getMonth() && 
-                      date.getFullYear() === currentMonth.getFullYear();
-    
-    // Debug logging for troubleshooting
-    console.log(`Date: ${dateString}, Month: ${date.getMonth()}, Year: ${date.getFullYear()}, Current Month: ${currentMonth.getMonth()}, Current Year: ${currentMonth.getFullYear()}, IsInMonth: ${isInMonth}`);
-    
-    return isInMonth;
+    try {
+      const date = new Date(dateString);
+      // Reset time to start of day to avoid timezone issues
+      const depositDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const selectedMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+      
+      const isInMonth = depositDate.getMonth() === selectedMonth.getMonth() && 
+                        depositDate.getFullYear() === selectedMonth.getFullYear();
+      
+      // Debug logging for troubleshooting
+      console.log(`Date: ${dateString}, Deposit Month: ${depositDate.getMonth()}, Deposit Year: ${depositDate.getFullYear()}, Selected Month: ${selectedMonth.getMonth()}, Selected Year: ${selectedMonth.getFullYear()}, IsInMonth: ${isInMonth}`);
+      
+      return isInMonth;
+    } catch (error) {
+      console.error('Error parsing date:', dateString, error);
+      return false;
+    }
   };
 
   // Filter and sort bills
@@ -133,8 +155,19 @@ const BillManagement = () => {
 
   // Combine bills and deposits for table view (filtered by month)
   const combinedTableItems = React.useMemo(() => {
-    const filteredDeposits = deposits.filter(deposit => isInSelectedMonth(deposit.deposit_date));
+    console.log('🔍 Debug - Current deposits:', deposits);
+    console.log('🔍 Debug - Current month:', currentMonth);
+    
+    const filteredDeposits = deposits.filter(deposit => {
+      const isInMonth = isInSelectedMonth(deposit.deposit_date);
+      console.log(`🔍 Debug - Deposit ${deposit.id}: ${deposit.deposit_date} - IsInMonth: ${isInMonth}`);
+      return isInMonth;
+    });
+    
     const filteredBills = bills.filter(bill => isInSelectedMonth(bill.dueDate));
+    
+    console.log('🔍 Debug - Filtered deposits:', filteredDeposits);
+    console.log('🔍 Debug - Filtered bills:', filteredBills);
     
     const depositItems = filteredDeposits.map(deposit => ({
       ...deposit,
@@ -316,12 +349,17 @@ const BillManagement = () => {
 
   const handleDepositConfirm = async (depositData) => {
     try {
+      console.log('🔍 Debug - Creating deposit with data:', depositData);
       const result = await depositService.createDeposit(user.id, depositData);
+      
+      console.log('🔍 Debug - Deposit creation result:', result);
       
       if (result?.success) {
         setDeposits(prev => [result.data, ...prev]);
+        console.log('✅ Deposit created successfully:', result.data);
       } else {
         setError(result?.error || 'Failed to add deposit');
+        console.log('❌ Deposit creation failed:', result?.error);
       }
     } catch (error) {
       setError('Failed to add deposit');
@@ -342,6 +380,12 @@ const BillManagement = () => {
       setError('Failed to delete deposit');
       console.log('Delete deposit error:', error);
     }
+  };
+
+  const handleMonthChange = (newMonth) => {
+    // Ensure the month is set to the first day to avoid day-specific issues
+    const firstDayOfMonth = new Date(newMonth.getFullYear(), newMonth.getMonth(), 1);
+    setCurrentMonth(firstDayOfMonth);
   };
 
   // Responsive view handling
@@ -430,6 +474,24 @@ const BillManagement = () => {
               Add Deposit
             </Button>
             
+            {/* Test button for debugging */}
+            <Button
+              variant="outline"
+              onClick={async () => {
+                console.log('🔍 Debug - Creating test deposit...');
+                const testDeposit = {
+                  amount: 100,
+                  source: 'Test Deposit',
+                  depositDate: new Date().toISOString().split('T')[0],
+                  notes: 'Test deposit for debugging'
+                };
+                await handleDepositConfirm(testDeposit);
+              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              Test Deposit
+            </Button>
+            
             <Button
               variant="default"
               onClick={() => navigate('/add-edit-bill')}
@@ -446,7 +508,7 @@ const BillManagement = () => {
         <div className="mb-6">
           <MonthNavigator
             currentMonth={currentMonth}
-            onMonthChange={setCurrentMonth}
+            onMonthChange={handleMonthChange}
           />
         </div>
 
@@ -494,24 +556,44 @@ const BillManagement = () => {
           </div>
         ) : (
           <>
+            {/* Debug Section - Temporary */}
+            <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <h3 className="text-sm font-semibold text-yellow-800 mb-2">Debug Info (Temporary)</h3>
+              <div className="text-xs text-yellow-700 space-y-1">
+                <p>Total deposits in database: {deposits.length}</p>
+                <p>Current month: {currentMonth.toLocaleDateString()}</p>
+                <p>Deposits in current month: {deposits.filter(deposit => isInSelectedMonth(deposit.deposit_date)).length}</p>
+                <p>All deposits: {JSON.stringify(deposits.map(d => ({ id: d.id, date: d.deposit_date, source: d.source })))}</p>
+              </div>
+            </div>
+
             {/* Cards View */}
             {currentView === 'cards' && (
               <div className="space-y-8">
                 {/* Deposits Section */}
-                {deposits.filter(deposit => isInSelectedMonth(deposit.deposit_date)).length > 0 && (
-                  <div>
-                    <h2 className="text-lg font-semibold text-slate-900 mb-4">Deposits</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                      {deposits.filter(deposit => isInSelectedMonth(deposit.deposit_date)).map(deposit => (
-                        <DepositCard
-                          key={deposit.id}
-                          deposit={deposit}
-                          onDelete={handleDeleteDeposit}
-                        />
-                      ))}
+                {(() => {
+                  // Temporarily show all deposits for debugging
+                  const allDeposits = deposits;
+                  const filteredDeposits = deposits.filter(deposit => isInSelectedMonth(deposit.deposit_date));
+                  console.log('🔍 Debug - Deposits section - Total deposits:', deposits.length);
+                  console.log('🔍 Debug - Deposits section - Filtered deposits:', filteredDeposits.length);
+                  console.log('🔍 Debug - Deposits section - Should show section:', allDeposits.length > 0);
+                  
+                  return allDeposits.length > 0 && (
+                    <div>
+                      <h2 className="text-lg font-semibold text-slate-900 mb-4">Deposits (All - Debug)</h2>
+                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        {allDeposits.map(deposit => (
+                          <DepositCard
+                            key={deposit.id}
+                            deposit={deposit}
+                            onDelete={handleDeleteDeposit}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
 
                 {/* Bills Section */}
                 <div>

@@ -4,16 +4,22 @@ class DepositService {
   // Get all deposits for the current user
   async getDeposits(userId) {
     try {
+      console.log('🔍 Debug - Fetching deposits for user:', userId);
+      
       const { data, error } = await supabase
         .from('deposits')
         .select('*')
         .eq('user_id', userId)
         .order('deposit_date', { ascending: false });
 
+      console.log('🔍 Debug - Supabase response:', { data, error });
+
       if (error) {
+        console.log('❌ Supabase error:', error);
         return { success: false, error: error.message };
       }
 
+      console.log('✅ Deposits fetched successfully:', data?.length || 0, 'deposits found');
       return { success: true, data: data || [] };
     } catch (error) {
       if (error?.message?.includes('Failed to fetch') || 
