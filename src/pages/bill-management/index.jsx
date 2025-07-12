@@ -91,7 +91,7 @@ const BillManagement = () => {
       } else if (statusFilter === 'unpaid') {
         matchesStatus = bill.status === 'unpaid';
       } else if (statusFilter === 'overdue') {
-        matchesStatus = bill.status === 'overdue';
+        matchesStatus = bill.isOverdue;
       }
       
       return matchesStatus;
