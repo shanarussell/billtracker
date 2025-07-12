@@ -140,6 +140,14 @@ const FinancialItemCard = ({ item, onTogglePayment, onEdit, onDelete }) => {
           >
             <Icon name={item.isPaid ? "CheckCircle" : "CreditCard"} size={16} />
           </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onDelete && onDelete(item.id, item)}
+            className="text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg p-2"
+          >
+            <Icon name="Trash2" size={16} />
+          </Button>
         </div>
       </div>
 

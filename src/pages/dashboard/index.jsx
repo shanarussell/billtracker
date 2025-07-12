@@ -14,6 +14,7 @@ import FinancialItemCard from './components/FinancialItemCard';
 import AlertNotifications from './components/AlertNotifications';
 import PaymentModal from '../../components/ui/PaymentModal';
 import DepositModal from '../../components/ui/DepositModal';
+import DeleteConfirmModal from '../../components/ui/DeleteConfirmModal';
 import Icon from '../../components/AppIcon';
 
 const Dashboard = () => {
@@ -26,6 +27,7 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [paymentModal, setPaymentModal] = useState({ isOpen: false, bill: null });
   const [depositModal, setDepositModal] = useState({ isOpen: false });
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, bill: null });
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   useEffect(() => {
@@ -230,6 +232,63 @@ const Dashboard = () => {
     }
   };
 
+  const handleDeleteBill = (billId, bill) => {
+    // Check if this is part of a recurring bill series
+    const isRecurring = bills.some(b => 
+      b.name === bill.name && 
+      b.id !== bill.id && 
+      b.dueDate > bill.dueDate
+    );
+    
+    setDeleteModal({ 
+      isOpen: true, 
+      bill: { ...bill, isRecurring } 
+    });
+  };
+
+  const handleDeleteBillConfirm = async (deleteOption) => {
+    try {
+      const bill = deleteModal.bill;
+      
+      if (deleteOption === 'all' && bill.isRecurring) {
+        // Delete all future bills with the same name
+        const futureBills = bills.filter(b => 
+          b.name === bill.name && 
+          b.dueDate >= bill.dueDate
+        );
+        
+        for (const futureBill of futureBills) {
+          await billService.deleteBill(futureBill.id);
+        }
+        
+        setBills(prev => prev.filter(b => 
+          !(b.name === bill.name && b.dueDate >= bill.dueDate)
+        ));
+      } else {
+        // Delete only this bill
+        const result = await billService.deleteBill(bill.id);
+        
+        if (result?.success) {
+          setBills(prev => prev.filter(b => b.id !== bill.id));
+        } else {
+          setError(result?.error || 'Failed to delete bill');
+          return;
+        }
+      }
+      
+      // Reload metrics
+      const metricsResult = await billService.getFinancialMetrics(user.id);
+      if (metricsResult?.success) {
+        setMetrics(metricsResult.data);
+      }
+      
+      setDeleteModal({ isOpen: false, bill: null });
+    } catch (error) {
+      setError('Failed to delete bill');
+      console.log('Delete bill error:', error);
+    }
+  };
+
   // Helper function to calculate if a bill is overdue
   const calculateIsOverdue = (bill) => {
     const today = new Date();
@@ -418,7 +477,7 @@ const Dashboard = () => {
                       item={item}
                       onTogglePayment={handleTogglePayment}
                       onEdit={handleEditBill}
-                      onDelete={handleDeleteDeposit}
+                      onDelete={item.type === 'deposit' ? handleDeleteDeposit : handleDeleteBill}
                     />
                   ))}
                 </div>
@@ -507,6 +566,15 @@ const Dashboard = () => {
         onClose={() => setDepositModal({ isOpen: false })}
         onConfirm={handleDepositConfirm}
         currentUser={user}
+      />
+
+      {/* Delete Confirm Modal */}
+      <DeleteConfirmModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ isOpen: false, bill: null })}
+        onConfirm={handleDeleteBillConfirm}
+        bill={deleteModal.bill}
+        isRecurring={deleteModal.bill?.isRecurring}
       />
     </div>
   );
