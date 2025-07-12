@@ -20,7 +20,8 @@ const UpcomingBillCard = ({ bill, onTogglePayment, onEdit }) => {
 
   const getDaysUntilDue = () => {
     const today = new Date();
-    const dueDate = new Date(bill.dueDate);
+    const [year, month, day] = bill.dueDate.split('-').map(Number);
+    const dueDate = new Date(year, month - 1, day);
     const diffTime = dueDate - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     

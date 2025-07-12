@@ -135,8 +135,14 @@ const BillForm = () => {
 
 
 
-    if (formData.isRecurring && formData.endDate && new Date(formData.endDate) <= new Date(formData.dueDate)) {
-      newErrors.endDate = 'End date must be after due date';
+    if (formData.isRecurring && formData.endDate) {
+      const [ey, em, ed] = formData.endDate.split('-').map(Number);
+      const [dy, dm, dd] = formData.dueDate.split('-').map(Number);
+      const endDate = new Date(ey, em - 1, ed);
+      const dueDate = new Date(dy, dm - 1, dd);
+      if (endDate <= dueDate) {
+        newErrors.endDate = 'End date must be after due date';
+      }
     }
 
     setErrors(newErrors);
@@ -198,8 +204,9 @@ const BillForm = () => {
     if (!formData.isRecurring || !formData.dueDate) return [];
     
     const dates = [];
-    const startDate = new Date(formData.dueDate);
-    const endDate = formData.endDate ? new Date(formData.endDate) : null;
+    const [sy, sm, sd] = formData.dueDate.split('-').map(Number);
+    const startDate = new Date(sy, sm - 1, sd);
+    const endDate = formData.endDate ? (() => { const [ey, em, ed] = formData.endDate.split('-').map(Number); return new Date(ey, em - 1, ed); })() : null;
     
     for (let i = 0; i < 3; i++) {
       const nextDate = new Date(startDate);

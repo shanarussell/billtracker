@@ -5,7 +5,8 @@ import Button from '../../../components/ui/Button';
 const BillTimeline = ({ bills, onBillClick }) => {
   const getStatusColor = (status, dueDate) => {
     const today = new Date();
-    const due = new Date(dueDate);
+    const [year, month, day] = dueDate.split('-').map(Number);
+    const due = new Date(year, month - 1, day);
     const isOverdue = due < today && status !== 'paid';
     
     if (status === 'paid') return 'text-success border-success/20 bg-success/5';
@@ -15,7 +16,8 @@ const BillTimeline = ({ bills, onBillClick }) => {
 
   const getStatusIcon = (status, dueDate) => {
     const today = new Date();
-    const due = new Date(dueDate);
+    const [year, month, day] = dueDate.split('-').map(Number);
+    const due = new Date(year, month - 1, day);
     const isOverdue = due < today && status !== 'paid';
     
     if (status === 'paid') return 'CheckCircle';
@@ -24,14 +26,19 @@ const BillTimeline = ({ bills, onBillClick }) => {
   };
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
     return date.toLocaleDateString('en-US', { 
       month: 'short', 
       day: 'numeric' 
     });
   };
 
-  const sortedBills = [...bills].sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+  const sortedBills = [...bills].sort((a, b) => {
+    const [ay, am, ad] = a.dueDate.split('-').map(Number);
+    const [by, bm, bd] = b.dueDate.split('-').map(Number);
+    return new Date(ay, am - 1, ad) - new Date(by, bm - 1, bd);
+  });
 
   return (
     <div className="bg-card rounded-lg border p-6">

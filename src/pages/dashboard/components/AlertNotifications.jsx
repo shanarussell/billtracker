@@ -15,7 +15,8 @@ const AlertNotifications = ({ bills = [], dismissedAlerts = new Set(), onDismiss
     threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3);
 
     bills.forEach((bill) => {
-      const dueDate = new Date(bill.dueDate);
+      const [year, month, day] = bill.dueDate.split('-').map(Number);
+      const dueDate = new Date(year, month - 1, day);
       const daysUntilDue = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
 
       // Overdue bills

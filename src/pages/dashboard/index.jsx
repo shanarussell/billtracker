@@ -227,7 +227,8 @@ const Dashboard = () => {
 
   // Helper function to check if a date is in the selected month
   const isInSelectedMonth = (dateString) => {
-    const date = new Date(dateString);
+    const [year, month, day] = dateString.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
     return date.getMonth() === currentMonth.getMonth() && 
            date.getFullYear() === currentMonth.getFullYear();
   };
@@ -239,12 +240,20 @@ const Dashboard = () => {
   // Get overdue bills (bills that are overdue) for selected month
   const overdueBills = filteredBills
     ?.filter(bill => bill.isOverdue)
-    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate)) || [];
+    .sort((a, b) => {
+      const [ay, am, ad] = a.dueDate.split('-').map(Number);
+      const [by, bm, bd] = b.dueDate.split('-').map(Number);
+      return new Date(ay, am - 1, ad) - new Date(by, bm - 1, bd);
+    }) || [];
 
   // Get upcoming bills (bills that are not overdue, next 5) for selected month
   const upcomingBills = filteredBills
     ?.filter(bill => !bill.isOverdue)
-    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+    .sort((a, b) => {
+      const [ay, am, ad] = a.dueDate.split('-').map(Number);
+      const [by, bm, bd] = b.dueDate.split('-').map(Number);
+      return new Date(ay, am - 1, ad) - new Date(by, bm - 1, bd);
+    })
     .slice(0, 5) || [];
 
   // Combine deposits and bills into a single list sorted by date for selected month
@@ -263,7 +272,11 @@ const Dashboard = () => {
       amount: parseFloat(bill.amount),
       isPositive: false
     }))
-  ].sort((a, b) => new Date(a.displayDate) - new Date(b.displayDate)).slice(0, 8);
+  ].sort((a, b) => {
+    const [ay, am, ad] = a.displayDate.split('-').map(Number);
+    const [by, bm, bd] = b.displayDate.split('-').map(Number);
+    return new Date(ay, am - 1, ad) - new Date(by, bm - 1, bd);
+  }).slice(0, 8);
 
   // Show loading state
   if (authLoading || loading) {
