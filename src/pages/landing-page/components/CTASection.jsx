@@ -77,7 +77,7 @@ const CTASection = () => {
               <div className="order-2 lg:order-1">
                 <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
                   <Image
-                    src="/assets/images/bill-tracker-screenshots-5.png"
+                    src="/assets/images/bill-tracker-screenshots-4.png"
                     alt="Easy Bill Tracker Financial Summary"
                     className="w-full h-auto"
                   />

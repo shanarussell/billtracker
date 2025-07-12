@@ -9,21 +9,21 @@ const HowItWorksSection = () => {
       title: "Add Your Bills & Income",
       description: "Create your account and start adding your monthly bills and income sources. Categorize bills and track payment methods.",
       icon: "UserPlus",
-      image: "/assets/images/bill-tracker-screenshots-2.png"
+      image: "/assets/images/bill-tracker-screenshots-5.png"
     },
     {
       id: 2,
       title: "Set Up Recurring Bills",
       description: "Configure recurring bills with weekly, monthly, quarterly, or annual frequencies. Our system automatically generates future payments.",
       icon: "Repeat",
-      image: "/assets/images/bill-tracker-screenshots-3.png"
+      image: "/assets/images/bill-tracker-screenshots-1.png"
     },
     {
       id: 3,
       title: "Track & Monitor",
       description: "Mark payments as complete, track your income vs expenses, and get alerts for overdue bills. View comprehensive financial metrics.",
       icon: "BarChart3",
-      image: "/assets/images/bill-tracker-screenshots-4.png"
+      image: "/assets/images/bill-tracker-screenshots-2.png"
     }
   ];
 

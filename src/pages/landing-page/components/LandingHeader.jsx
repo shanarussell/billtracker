@@ -61,7 +61,7 @@ const LandingHeader = () => {
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             <Button
-              variant="ghost"
+              variant="outline"
               onClick={handleLogin}
               className="font-medium"
             >
@@ -105,7 +105,7 @@ const LandingHeader = () => {
               
               <div className="pt-4 border-t border-border space-y-3">
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   onClick={handleLogin}
                   fullWidth
                   className="justify-start font-medium"
