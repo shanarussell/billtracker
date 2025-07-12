@@ -35,6 +35,7 @@ const BillForm = () => {
 
 
   const frequencyOptions = [
+    { value: 'weekly', label: 'Weekly' },
     { value: 'monthly', label: 'Monthly' },
     { value: 'quarterly', label: 'Quarterly' },
     { value: 'annually', label: 'Annually' }
@@ -212,6 +213,9 @@ const BillForm = () => {
       const nextDate = new Date(startDate);
       
       switch (formData.frequency) {
+        case 'weekly':
+          nextDate.setDate(startDate.getDate() + (i * 7));
+          break;
         case 'monthly':
           nextDate.setMonth(startDate.getMonth() + i);
           break;
