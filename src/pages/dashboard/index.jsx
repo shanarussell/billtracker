@@ -271,7 +271,15 @@ const Dashboard = () => {
         </div>
 
         {/* Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <MetricsCard
+            title="Total Deposits"
+            amount={`$${(metrics?.totalDeposits || 0).toFixed(2)}`}
+            icon="DollarSign"
+            variant="success"
+            trend="up"
+            trendValue="Income added"
+          />
           <MetricsCard
             title="Total Bills Due"
             amount={`$${(metrics?.totalDue || 0).toFixed(2)}`}
@@ -287,26 +295,10 @@ const Dashboard = () => {
             trendValue="Payment progress"
           />
           <MetricsCard
-            title="Total Deposits"
-            amount={`$${(metrics?.totalDeposits || 0).toFixed(2)}`}
-            icon="DollarSign"
-            variant="success"
-            trend="up"
-            trendValue="Income added"
-          />
-          <MetricsCard
             title="Remaining Balance"
             amount={`$${(metrics?.remainingBalance || 0).toFixed(2)}`}
             icon="AlertCircle"
             variant={(metrics?.remainingBalance || 0) > 0 ? "warning" : "success"}
-          />
-          <MetricsCard
-            title="Available Funds"
-            amount={`$${(metrics?.availableFunds || 0).toFixed(2)}`}
-            icon="DollarSign"
-            variant={(metrics?.availableFunds || 0) > 0 ? "success" : "danger"}
-            trend={(metrics?.availableFunds || 0) > 0 ? "up" : "down"}
-            trendValue={`${(metrics?.availableFunds || 0) > 0 ? '+' : ''}$${Math.abs(metrics?.availableFunds || 0).toFixed(2)}`}
           />
         </div>
 
