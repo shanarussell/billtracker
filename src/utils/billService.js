@@ -196,6 +196,17 @@ class BillService {
   // Update an existing bill
   async updateBill(billId, updates) {
     try {
+      console.log('🔍 Updating bill with data:', updates);
+      
+      // First, get the current bill to check if it's changing to recurring
+      const currentBill = await this.getBillById(billId);
+      const wasRecurring = currentBill.success ? currentBill.data.isRecurring : false;
+      const isChangingToRecurring = !wasRecurring && updates.isRecurring;
+      
+      console.log('🔄 Was recurring:', wasRecurring);
+      console.log('🔄 Is changing to recurring:', isChangingToRecurring);
+      
+      // Update the main bill
       const { data, error } = await supabase
         .from('bills')
         .update({
@@ -213,11 +224,40 @@ class BillService {
         .single();
 
       if (error) {
+        console.error('❌ Error updating bill:', error);
         return { success: false, error: error.message };
+      }
+
+      console.log('✅ Bill updated successfully');
+
+      // If the bill is changing to recurring, generate the recurring instances
+      if (isChangingToRecurring) {
+        console.log('🔄 Generating recurring bills for updated bill');
+        const bills = this.generateRecurringBillInstances(data.user_id, {
+          ...updates,
+          dueDate: updates.dueDate,
+          frequency: updates.frequency || 'monthly',
+          endDate: updates.endDate
+        });
+        
+        if (bills.length > 0) {
+          const { data: recurringData, error: recurringError } = await supabase
+            .from('bills')
+            .insert(bills)
+            .select();
+
+          if (recurringError) {
+            console.error('❌ Error creating recurring bills:', recurringError);
+            // Don't fail the update, just log the warning
+          } else {
+            console.log('✅ Successfully created', recurringData.length, 'recurring bills');
+          }
+        }
       }
 
       return { success: true, data };
     } catch (error) {
+      console.error('❌ JavaScript error in updateBill:', error);
       if (error?.message?.includes('Failed to fetch') || 
           error?.message?.includes('NetworkError')) {
         return { 
@@ -225,7 +265,6 @@ class BillService {
           error: 'Cannot connect to database. Please check your internet connection.' 
         };
       }
-      console.log('JavaScript error in updateBill:', error);
       return { success: false, error: 'Failed to update bill' };
     }
   }
