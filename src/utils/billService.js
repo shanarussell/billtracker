@@ -22,21 +22,30 @@ class BillService {
       console.log('✅ Bills fetched successfully:', data?.length || 0, 'bills found');
 
       // Transform data to match component expectations
-      const transformedData = data?.map(bill => ({
-        id: bill.id,
-        name: bill.name,
-        category: bill.category,
-        amount: parseFloat(bill.amount),
-        dueDate: bill.due_date, // Keep as-is, will be handled by formatDate
-        paymentMethod: bill.payment_method?.name || 'Not Set',
-        status: bill.status,
-        isPaid: bill.status === 'paid',
-        isOverdue: bill.status === 'overdue',
-        isRecurring: bill.is_recurring,
-        notes: bill.notes,
-        createdAt: bill.created_at,
-        updatedAt: bill.updated_at
-      })) || [];
+      const transformedData = data?.map(bill => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Reset time to start of day
+        const dueDate = new Date(bill.due_date);
+        dueDate.setHours(0, 0, 0, 0); // Reset time to start of day
+        
+        const isOverdue = !bill.status === 'paid' && dueDate < today;
+        
+        return {
+          id: bill.id,
+          name: bill.name,
+          category: bill.category,
+          amount: parseFloat(bill.amount),
+          dueDate: bill.due_date, // Keep as-is, will be handled by formatDate
+          paymentMethod: bill.payment_method?.name || 'Not Set',
+          status: bill.status,
+          isPaid: bill.status === 'paid',
+          isOverdue: isOverdue,
+          isRecurring: bill.is_recurring,
+          notes: bill.notes,
+          createdAt: bill.created_at,
+          updatedAt: bill.updated_at
+        };
+      }) || [];
 
       return { success: true, data: transformedData };
     } catch (error) {
