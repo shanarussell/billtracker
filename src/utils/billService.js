@@ -149,16 +149,30 @@ class BillService {
           nextDate.setDate(startDate.getDate() + (i * 7));
           break;
         case 'monthly':
+          // For monthly, we need to preserve the day of month
+          const originalDay = startDate.getDate();
           nextDate.setMonth(startDate.getMonth() + i);
+          // If the original day doesn't exist in the new month (e.g., Jan 31 -> Feb), 
+          // set to the last day of the new month
+          const lastDayOfMonth = new Date(nextDate.getFullYear(), nextDate.getMonth() + 1, 0).getDate();
+          nextDate.setDate(Math.min(originalDay, lastDayOfMonth));
           break;
         case 'quarterly':
+          // For quarterly, preserve the day of month
+          const originalDayQuarterly = startDate.getDate();
           nextDate.setMonth(startDate.getMonth() + (i * 3));
+          const lastDayOfQuarterlyMonth = new Date(nextDate.getFullYear(), nextDate.getMonth() + 1, 0).getDate();
+          nextDate.setDate(Math.min(originalDayQuarterly, lastDayOfQuarterlyMonth));
           break;
         case 'annually':
           nextDate.setFullYear(startDate.getFullYear() + i);
           break;
         default:
+          // For monthly, preserve the day of month
+          const originalDayDefault = startDate.getDate();
           nextDate.setMonth(startDate.getMonth() + i);
+          const lastDayOfDefaultMonth = new Date(nextDate.getFullYear(), nextDate.getMonth() + 1, 0).getDate();
+          nextDate.setDate(Math.min(originalDayDefault, lastDayOfDefaultMonth));
       }
       
       // Stop if we've reached the end date
