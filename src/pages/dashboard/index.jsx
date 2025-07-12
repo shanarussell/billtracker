@@ -11,6 +11,7 @@ import QuickActions from './components/QuickActions';
 import AlertNotifications from './components/AlertNotifications';
 import PaymentModal from '../../components/ui/PaymentModal';
 import DepositModal from '../../components/ui/DepositModal';
+import DepositCard from '../bill-management/components/DepositCard';
 import Button from '../../components/ui/Button';
 import Icon from '../../components/AppIcon';
 
@@ -189,6 +190,27 @@ const Dashboard = () => {
     }
   };
 
+  const handleDeleteDeposit = async (depositId) => {
+    try {
+      const result = await depositService.deleteDeposit(depositId);
+      
+      if (result?.success) {
+        setDeposits(prev => prev.filter(deposit => deposit.id !== depositId));
+        
+        // Reload metrics to update available funds
+        const metricsResult = await billService.getFinancialMetrics(user.id);
+        if (metricsResult?.success) {
+          setMetrics(metricsResult.data);
+        }
+      } else {
+        setError(result?.error || 'Failed to delete deposit');
+      }
+    } catch (error) {
+      setError('Failed to delete deposit');
+      console.log('Delete deposit error:', error);
+    }
+  };
+
   // Get upcoming bills (next 5 bills)
   const upcomingBills = bills
     ?.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
@@ -249,7 +271,7 @@ const Dashboard = () => {
         </div>
 
         {/* Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <MetricsCard
             title="Total Bills Due"
             amount={`$${(metrics?.totalDue || 0).toFixed(2)}`}
@@ -263,6 +285,14 @@ const Dashboard = () => {
             variant="success"
             trend="up"
             trendValue="Payment progress"
+          />
+          <MetricsCard
+            title="Total Deposits"
+            amount={`$${(metrics?.totalDeposits || 0).toFixed(2)}`}
+            icon="DollarSign"
+            variant="success"
+            trend="up"
+            trendValue="Income added"
           />
           <MetricsCard
             title="Remaining Balance"
@@ -283,6 +313,37 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column */}
           <div className="space-y-8">
+            {/* Recent Deposits */}
+            {deposits.length > 0 && (
+              <div className="bg-white rounded-lg border border-slate-200 p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-semibold text-slate-900">
+                    Recent Deposits
+                  </h2>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddDeposit}
+                    iconName="Plus"
+                    iconPosition="left"
+                    iconSize={16}
+                  >
+                    Add Deposit
+                  </Button>
+                </div>
+
+                <div className="space-y-4">
+                  {deposits.slice(0, 3).map((deposit) => (
+                    <DepositCard
+                      key={deposit.id}
+                      deposit={deposit}
+                      onDelete={handleDeleteDeposit}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Upcoming Bills */}
             <div className="bg-white rounded-lg border border-slate-200 p-6">
               <div className="flex items-center justify-between mb-6">
@@ -347,7 +408,7 @@ const Dashboard = () => {
         {/* Summary Stats */}
         <div className="mt-8 bg-white rounded-lg border border-slate-200 p-6">
           <h3 className="text-lg font-semibold text-slate-900 mb-4">Monthly Summary</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div className="text-center">
               <p className="text-2xl font-bold text-slate-900">{bills?.length || 0}</p>
               <p className="text-sm text-slate-600">Total Bills</p>
@@ -367,6 +428,10 @@ const Dashboard = () => {
             <div className="text-center">
               <p className="text-2xl font-bold text-red-600">{metrics?.overdueBills || 0}</p>
               <p className="text-sm text-slate-600">Overdue</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-bold text-green-600">{deposits?.length || 0}</p>
+              <p className="text-sm text-slate-600">Deposits</p>
             </div>
           </div>
         </div>
