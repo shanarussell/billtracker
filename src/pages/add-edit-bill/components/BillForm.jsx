@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import billService from '../../../utils/billService';
 import Input from '../../../components/ui/Input';
@@ -11,9 +11,11 @@ import Icon from '../../../components/AppIcon';
 const BillForm = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const { user } = useAuth();
   const billId = searchParams.get('id');
-  const isEditMode = Boolean(billId);
+  const billFromState = location.state?.bill;
+  const isEditMode = Boolean(billId || billFromState);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -50,7 +52,25 @@ const BillForm = () => {
   // Load bill data for editing
   useEffect(() => {
     const loadBillData = async () => {
-      if (!isEditMode || !billId) return;
+      if (!isEditMode) return;
+      
+      // If we have bill data from state, use it directly
+      if (billFromState) {
+        setFormData({
+          name: billFromState.name || '',
+          amount: billFromState.amount?.toString() || '',
+          dueDate: billFromState.dueDate || '',
+          isRecurring: billFromState.isRecurring || false,
+          frequency: 'monthly', // Default since we don't store this
+          endDate: '', // Default since we don't store this
+          notes: billFromState.notes || '',
+          reminderDays: '3' // Default since we don't store this
+        });
+        return;
+      }
+      
+      // Otherwise, fetch bill data by ID
+      if (!billId) return;
       
       try {
         setLoadingBill(true);
@@ -81,7 +101,7 @@ const BillForm = () => {
     };
 
     loadBillData();
-  }, [billId, isEditMode]);
+  }, [billId, billFromState, isEditMode]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -145,7 +165,8 @@ const BillForm = () => {
 
       let result;
       if (isEditMode) {
-        result = await billService.updateBill(billId, billData);
+        const editBillId = billId || billFromState?.id;
+        result = await billService.updateBill(editBillId, billData);
       } else {
         result = await billService.createBill(user.id, billData);
       }
