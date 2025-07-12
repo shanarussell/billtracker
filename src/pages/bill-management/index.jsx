@@ -40,6 +40,11 @@ const BillManagement = () => {
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
 
+  // Debug deposits state changes
+  useEffect(() => {
+    console.log('🔍 Debug - Deposits state changed:', deposits);
+  }, [deposits]);
+
   // Load bills
   useEffect(() => {
     let isMounted = true;
@@ -157,6 +162,7 @@ const BillManagement = () => {
   const combinedTableItems = React.useMemo(() => {
     console.log('🔍 Debug - Current deposits:', deposits);
     console.log('🔍 Debug - Current month:', currentMonth);
+    console.log('🔍 Debug - Deposits state length:', deposits?.length || 0);
     
     const filteredDeposits = deposits.filter(deposit => {
       const isInMonth = isInSelectedMonth(deposit.deposit_date);
@@ -581,9 +587,12 @@ const BillManagement = () => {
                   console.log('🔍 Debug - Deposits section - Filtered deposits:', filteredDeposits.length);
                   console.log('🔍 Debug - Deposits section - Should show section:', allDeposits.length > 0);
                   console.log('🔍 Debug - Deposits section - All deposits:', allDeposits);
+                  console.log('🔍 Debug - Deposits section - Deposits array type:', typeof deposits);
+                  console.log('🔍 Debug - Deposits section - Is deposits array:', Array.isArray(deposits));
                   
                   // Show deposits section if there are any deposits (for now, show all)
                   if (allDeposits.length > 0) {
+                    console.log('🔍 Debug - Deposits section - Rendering deposits section');
                     return (
                       <div>
                         <h2 className="text-lg font-semibold text-slate-900 mb-4">Deposits (All - Debug)</h2>
@@ -601,6 +610,8 @@ const BillManagement = () => {
                         </div>
                       </div>
                     );
+                  } else {
+                    console.log('🔍 Debug - Deposits section - No deposits to show');
                   }
                   return null;
                 })()}
@@ -628,6 +639,8 @@ const BillManagement = () => {
             {/* Table View */}
             {currentView === 'table' && (
               <div className="bg-card border rounded-lg overflow-hidden">
+                {console.log('🔍 Debug - Rendering table view, currentView:', currentView)}
+                {console.log('🔍 Debug - Table view combined items:', combinedTableItems)}
                 <BillTable
                   bills={combinedTableItems}
                   onTogglePayment={handleTogglePayment}
